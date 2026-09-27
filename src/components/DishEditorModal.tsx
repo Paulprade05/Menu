@@ -207,7 +207,7 @@ export default function DishEditorModal({
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} style={{ flex: 1, overflowY: 'auto', padding: '16px 18px 24px 18px' }}>
+          <form onSubmit={handleSubmit} style={{ flex: 1, overflowY: 'auto', padding: '16px 18px calc(28px + var(--sab)) 18px' }}>
             {/* Dish Name */}
             <div style={{ marginBottom: '14px' }}>
               <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', color: '#64748b', marginBottom: '6px' }}>

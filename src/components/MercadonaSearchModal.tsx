@@ -201,7 +201,7 @@ export default function MercadonaSearchModal({
         </div>
 
         {/* Results Area */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '8px 18px 20px 18px' }}>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '8px 18px calc(24px + var(--sab)) 18px' }}>
           {isLoading && (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 0', gap: '10px' }}>
               <Loader2 size={28} className="spin-anim" color="#000000" />

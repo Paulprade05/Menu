@@ -153,13 +153,13 @@ export default function DishPickerModal({
         </div>
 
         {/* Content list */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '8px 18px 20px 18px' }}>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '8px 18px calc(24px + var(--sab)) 18px' }}>
           {/* Quick Options */}
           <div style={{ marginBottom: '14px' }}>
             <span style={{ fontSize: '11px', color: '#64748b', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
               Opciones rápidas
             </span>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '6px', marginTop: '6px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '6px', marginTop: '6px' }}>
               {quickCustomOptions.map(opt => (
                 <button
                   key={opt.label}

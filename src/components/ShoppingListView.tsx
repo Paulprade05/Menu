@@ -165,33 +165,33 @@ export default function ShoppingListView() {
           }}>
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
-              gap: '14px',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: '8px',
               marginBottom: '12px'
             }}>
               <div>
-                <span style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase', fontWeight: '700' }}>
+                <span style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', fontWeight: '700' }}>
                   Total Compra
                 </span>
-                <div className="price-text" style={{ fontSize: '22px', fontWeight: '900', color: '#0f172a', marginTop: '2px' }}>
+                <div className="price-text" style={{ fontSize: '18px', fontWeight: '900', color: '#0f172a', marginTop: '2px' }}>
                   {shoppingTotalCost.toFixed(2)} €
                 </div>
               </div>
 
               <div>
-                <span style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase', fontWeight: '700' }}>
+                <span style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', fontWeight: '700' }}>
                   En Carrito
                 </span>
-                <div className="price-text" style={{ fontSize: '18px', fontWeight: '700', color: '#0f172a', marginTop: '2px' }}>
+                <div className="price-text" style={{ fontSize: '16px', fontWeight: '700', color: '#0f172a', marginTop: '2px' }}>
                   {shoppingCheckedCost.toFixed(2)} €
                 </div>
               </div>
 
               <div>
-                <span style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase', fontWeight: '700' }}>
+                <span style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', fontWeight: '700' }}>
                   Pendiente
                 </span>
-                <div className="price-text" style={{ fontSize: '18px', fontWeight: '700', color: '#64748b', marginTop: '2px' }}>
+                <div className="price-text" style={{ fontSize: '16px', fontWeight: '700', color: '#64748b', marginTop: '2px' }}>
                   {shoppingPendingCost.toFixed(2)} €
                 </div>
               </div>

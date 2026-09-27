@@ -525,13 +525,14 @@ export default function MenuPlannerView() {
       {templateModalOpen && (
         <div className="modal-overlay" onClick={() => setTemplateModalOpen(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '480px' }}>
+            <div className="sheet-handle" />
             <div className="modal-header">
               <h3 style={{ fontSize: '15px', fontWeight: '800' }}>Plantillas de Menú Semanal</h3>
               <button onClick={() => setTemplateModalOpen(false)} className="btn btn-ghost btn-icon">
                 ✕
               </button>
             </div>
-            <div style={{ padding: '18px', overflowY: 'auto' }}>
+            <div style={{ padding: '18px 18px calc(24px + var(--sab)) 18px', overflowY: 'auto' }}>
               <form onSubmit={handleSaveTemplate} style={{ marginBottom: '16px' }}>
                 <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', color: '#64748b', marginBottom: '6px' }}>
                   Guardar semana actual como plantilla
