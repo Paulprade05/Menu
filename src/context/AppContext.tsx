@@ -63,6 +63,7 @@ interface AppContextType {
   toggleShoppingItem: (id: string) => void;
   removeShoppingItem: (id: string) => void;
   updateShoppingItemQuantity: (id: string, delta: number) => void;
+  updateShoppingItemPrice: (id: string, price: number) => void;
   clearCheckedShoppingItems: () => void;
   clearAllShoppingItems: () => void;
 
@@ -146,10 +147,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, [dishes, weekMenu, savedMenus, shoppingList, settings, isLoaded]);
 
-  // Dish actions
   const calculateDishCost = useCallback((ingredients: Ingredient[]): number => {
     return Number(ingredients.reduce((acc, ing) => {
-      const itemPrice = ing.mercadonaProduct?.price ?? ing.estimatedPrice ?? 0;
+      const itemPrice = ing.estimatedPrice !== undefined ? ing.estimatedPrice : (ing.mercadonaProduct?.price ?? 0);
       return acc + (itemPrice * (ing.quantity || 1));
     }, 0).toFixed(2));
   }, []);
@@ -342,7 +342,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           const key = ing.mercadonaProduct?.id ? `merc-${ing.mercadonaProduct.id}` : `name-${ing.name.toLowerCase().trim()}`;
           const existing = itemMap.get(key);
 
-          const price = ing.mercadonaProduct?.price ?? ing.estimatedPrice ?? 0;
+          const price = ing.estimatedPrice !== undefined ? ing.estimatedPrice : (ing.mercadonaProduct?.price ?? 0);
           const category = ing.mercadonaProduct?.categoryName || 'Despensa y Frescos';
 
           if (existing) {
@@ -417,6 +417,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       if (item.id !== id) return item;
       const newQty = Math.max(1, (item.quantity || 1) + delta);
       return { ...item, quantity: newQty };
+    }));
+  }, []);
+
+  const updateShoppingItemPrice = useCallback((id: string, price: number) => {
+    setShoppingList(prev => prev.map(item => {
+      if (item.id !== id) return item;
+      return { ...item, estimatedPrice: Math.max(0, price) };
     }));
   }, []);
 
@@ -545,21 +552,21 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const shoppingTotalCost = useMemo(() => {
     return Number(shoppingList.reduce((acc, item) => {
-      const p = item.mercadonaProduct?.price ?? item.estimatedPrice ?? 0;
+      const p = item.estimatedPrice !== undefined ? item.estimatedPrice : (item.mercadonaProduct?.price ?? 0);
       return acc + (p * (item.quantity || 1));
     }, 0).toFixed(2));
   }, [shoppingList]);
 
   const shoppingPendingCost = useMemo(() => {
     return Number(shoppingList.filter(i => !i.checked).reduce((acc, item) => {
-      const p = item.mercadonaProduct?.price ?? item.estimatedPrice ?? 0;
+      const p = item.estimatedPrice !== undefined ? item.estimatedPrice : (item.mercadonaProduct?.price ?? 0);
       return acc + (p * (item.quantity || 1));
     }, 0).toFixed(2));
   }, [shoppingList]);
 
   const shoppingCheckedCost = useMemo(() => {
     return Number(shoppingList.filter(i => i.checked).reduce((acc, item) => {
-      const p = item.mercadonaProduct?.price ?? item.estimatedPrice ?? 0;
+      const p = item.estimatedPrice !== undefined ? item.estimatedPrice : (item.mercadonaProduct?.price ?? 0);
       return acc + (p * (item.quantity || 1));
     }, 0).toFixed(2));
   }, [shoppingList]);
@@ -598,6 +605,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         toggleShoppingItem,
         removeShoppingItem,
         updateShoppingItemQuantity,
+        updateShoppingItemPrice,
         clearCheckedShoppingItems,
         clearAllShoppingItems,
         settings,

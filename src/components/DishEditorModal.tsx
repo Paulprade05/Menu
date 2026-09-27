@@ -133,8 +133,15 @@ export default function DishEditorModal({
     }));
   };
 
+  const handleUpdateIngredientPrice = (id: string, price: number) => {
+    setIngredients(prev => prev.map(i => {
+      if (i.id !== id) return i;
+      return { ...i, estimatedPrice: Math.max(0, price) };
+    }));
+  };
+
   const totalCost = ingredients.reduce((acc, ing) => {
-    const p = ing.mercadonaProduct?.price ?? ing.estimatedPrice ?? 0;
+    const p = ing.estimatedPrice !== undefined ? ing.estimatedPrice : (ing.mercadonaProduct?.price ?? 0);
     return acc + (p * (ing.quantity || 1));
   }, 0);
 
@@ -420,13 +427,31 @@ export default function DishEditorModal({
                         <div style={{ fontSize: '12px', fontWeight: '700', color: '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {ing.name}
                         </div>
-                        <div style={{ fontSize: '11px', color: '#64748b' }}>
-                          {ing.mercadonaProduct ? (
-                            <span>Mercadona • {ing.mercadonaProduct.price.toFixed(2)} €</span>
-                          ) : (
-                            <span>{ing.estimatedPrice > 0 ? `${ing.estimatedPrice.toFixed(2)} €` : 'Sin precio'}</span>
-                          )}
-                          <span> • {ing.unit}</span>
+                        <div style={{ fontSize: '11px', color: '#64748b', display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginTop: '3px' }}>
+                          <span>{ing.mercadonaProduct ? 'Mercadona' : 'Manual'}</span>
+                          <span>• {ing.unit}</span>
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '2px', background: '#ffffff', padding: '1px 5px', borderRadius: '4px', border: '1px solid #cbd5e1' }}>
+                            <input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              value={ing.estimatedPrice !== undefined ? ing.estimatedPrice : (ing.mercadonaProduct?.price || 0)}
+                              onChange={(e) => handleUpdateIngredientPrice(ing.id, parseFloat(e.target.value) || 0)}
+                              title="Haz clic para ajustar el precio (ej: 5.30 si tu pieza pesa más)"
+                              style={{
+                                width: '50px',
+                                border: 'none',
+                                background: 'transparent',
+                                textAlign: 'right',
+                                fontSize: '11px',
+                                fontWeight: '700',
+                                color: '#0f172a',
+                                outline: 'none',
+                                padding: 0
+                              }}
+                            />
+                            <span style={{ fontSize: '10px', fontWeight: '700', color: '#64748b' }}>€</span>
+                          </span>
                         </div>
                       </div>
 

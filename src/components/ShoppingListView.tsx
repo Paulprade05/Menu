@@ -22,6 +22,7 @@ export default function ShoppingListView() {
     toggleShoppingItem,
     removeShoppingItem,
     updateShoppingItemQuantity,
+    updateShoppingItemPrice,
     clearCheckedShoppingItems,
     clearAllShoppingItems,
     addShoppingItem,
@@ -344,7 +345,7 @@ export default function ShoppingListView() {
               {/* Items List */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 {items.map((item) => {
-                  const itemPrice = (item.mercadonaProduct?.price ?? item.estimatedPrice ?? 0);
+                  const itemPrice = item.estimatedPrice !== undefined ? item.estimatedPrice : (item.mercadonaProduct?.price ?? 0);
                   const lineTotal = itemPrice * (item.quantity || 1);
 
                   return (
@@ -485,15 +486,47 @@ export default function ShoppingListView() {
                           </button>
                         </div>
 
-                        {/* Total line price */}
-                        <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                          <span className="price-text" style={{
-                            fontSize: '14px',
-                            fontWeight: '800',
-                            color: item.checked ? '#94a3b8' : '#000000',
-                          }}>
-                            {lineTotal > 0 ? `${lineTotal.toFixed(2)} €` : '-'}
-                          </span>
+                        {/* Unit price editor & Total line price */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+                          <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '2px',
+                            background: '#ffffff',
+                            border: '1px solid #cbd5e1',
+                            borderRadius: '5px',
+                            padding: '2px 5px'
+                          }} title="Precio por unidad o bandeja. Haz clic para cambiarlo">
+                            <input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              value={itemPrice || ''}
+                              onChange={(e) => updateShoppingItemPrice(item.id, parseFloat(e.target.value) || 0)}
+                              style={{
+                                width: '48px',
+                                border: 'none',
+                                background: 'transparent',
+                                textAlign: 'right',
+                                fontSize: '12px',
+                                fontWeight: '700',
+                                color: '#0f172a',
+                                outline: 'none',
+                                padding: 0
+                              }}
+                            />
+                            <span style={{ fontSize: '11px', fontWeight: '700', color: '#64748b' }}>€</span>
+                          </div>
+
+                          <div style={{ textAlign: 'right', minWidth: '55px' }}>
+                            <span className="price-text" style={{
+                              fontSize: '14px',
+                              fontWeight: '800',
+                              color: item.checked ? '#94a3b8' : '#000000',
+                            }}>
+                              {lineTotal > 0 ? `${lineTotal.toFixed(2)} €` : '-'}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
