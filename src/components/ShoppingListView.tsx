@@ -100,7 +100,7 @@ export default function ShoppingListView() {
   const progressPercentage = totalItemsCount > 0 ? Math.round((checkedItemsCount / totalItemsCount) * 100) : 0;
 
   return (
-    <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '16px 16px 40px 16px' }}>
+    <div className="view-container">
       {/* Header and Summary */}
       <div style={{ marginBottom: '18px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px', marginBottom: '14px' }}>
@@ -114,16 +114,16 @@ export default function ShoppingListView() {
                 {checkedItemsCount} de {totalItemsCount} comprados
               </span>
             </div>
-            <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0f172a', letterSpacing: '-0.02em' }}>
+            <h2 style={{ fontSize: '22px', fontWeight: '800', color: '#0f172a', letterSpacing: '-0.02em' }}>
               Lista de la Compra
             </h2>
           </div>
 
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', width: '100%', maxWidth: '360px' }}>
             <button
               onClick={() => setIsMercadonaModalOpen(true)}
               className="btn btn-primary"
-              style={{ fontSize: '12px', padding: '8px 14px' }}
+              style={{ flex: 1, minWidth: '140px', fontSize: '12px', padding: '9px 14px' }}
             >
               <Plus size={15} />
               <span>Añadir producto</span>
@@ -133,7 +133,7 @@ export default function ShoppingListView() {
               <button
                 onClick={handleCopyList}
                 className="btn btn-secondary"
-                style={{ fontSize: '12px', padding: '8px 12px' }}
+                style={{ flex: 1, minWidth: '110px', fontSize: '12px', padding: '9px 12px' }}
                 title="Copiar lista para WhatsApp"
               >
                 {copiedNotification ? (
@@ -350,156 +350,152 @@ export default function ShoppingListView() {
                   return (
                     <div
                       key={item.id}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '10px',
-                        padding: '10px 12px',
-                        background: item.checked ? '#f8fafc' : '#ffffff',
-                        border: '1px solid #e2e8f0',
-                        borderRadius: '8px',
-                        opacity: item.checked ? 0.6 : 1,
-                        transition: 'all 0.15s ease',
-                      }}
+                      className={`shopping-item-card ${item.checked ? 'is-checked' : ''}`}
                     >
-                      {/* Checkbox */}
-                      <button
-                        onClick={() => toggleShoppingItem(item.id)}
-                        style={{
-                          background: 'transparent',
-                          border: 'none',
-                          cursor: 'pointer',
-                          padding: '2px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: item.checked ? '#000000' : '#94a3b8',
-                          flexShrink: 0
-                        }}
-                      >
-                        {item.checked ? (
-                          <CheckCircle2 size={22} color="#000000" />
-                        ) : (
-                          <Circle size={22} />
+                      {/* Top Row: Checkbox, Thumbnail, Full-width Name, Delete button */}
+                      <div className="shopping-item-top-row">
+                        {/* Checkbox */}
+                        <button
+                          onClick={() => toggleShoppingItem(item.id)}
+                          style={{
+                            background: 'transparent',
+                            border: 'none',
+                            cursor: 'pointer',
+                            padding: '2px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: item.checked ? '#000000' : '#94a3b8',
+                            flexShrink: 0
+                          }}
+                        >
+                          {item.checked ? (
+                            <CheckCircle2 size={22} color="#000000" />
+                          ) : (
+                            <Circle size={22} />
+                          )}
+                        </button>
+
+                        {/* Product Thumbnail */}
+                        {item.mercadonaProduct?.thumbnail && (
+                          <div style={{
+                            width: '40px',
+                            height: '40px',
+                            borderRadius: '6px',
+                            background: '#f8fafc',
+                            overflow: 'hidden',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                            border: '1px solid #e2e8f0'
+                          }}>
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={item.mercadonaProduct.thumbnail}
+                              alt={item.name}
+                              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                              loading="lazy"
+                            />
+                          </div>
                         )}
-                      </button>
 
-                      {/* Product Thumbnail */}
-                      {item.mercadonaProduct?.thumbnail && (
-                        <div style={{
-                          width: '38px',
-                          height: '38px',
-                          borderRadius: '6px',
-                          background: '#f8fafc',
-                          overflow: 'hidden',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexShrink: 0,
-                          border: '1px solid #e2e8f0'
-                        }}>
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={item.mercadonaProduct.thumbnail}
-                            alt={item.name}
-                            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                            loading="lazy"
-                          />
-                        </div>
-                      )}
-
-                      {/* Details */}
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{
-                          fontSize: '13px',
-                          fontWeight: '600',
-                          color: '#0f172a',
-                          textDecoration: item.checked ? 'line-through' : 'none',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap'
-                        }}>
-                          {item.name}
-                        </div>
-
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '1px', fontSize: '11px', color: '#64748b', flexWrap: 'wrap' }}>
-                          {item.mercadonaProduct?.brand && (
-                            <span style={{ fontWeight: '700', color: '#0f172a' }}>
-                              {item.mercadonaProduct.brand}
-                            </span>
-                          )}
-                          <span>• {itemPrice > 0 ? `${itemPrice.toFixed(2)} €/ud` : 'Sin precio'}</span>
-                          {item.sourceDishNames && item.sourceDishNames.length > 0 && (
-                            <span style={{ background: '#f1f5f9', padding: '1px 5px', borderRadius: '4px', border: '1px solid #e2e8f0' }}>
-                              {item.sourceDishNames.join(', ')}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Quantity Stepper */}
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '3px', flexShrink: 0 }}>
-                        <button
-                          onClick={() => updateShoppingItemQuantity(item.id, -1)}
-                          style={{
-                            width: '24px',
-                            height: '24px',
-                            borderRadius: '4px',
-                            background: '#f1f5f9',
-                            border: '1px solid #cbd5e1',
+                        {/* Details */}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{
+                            fontSize: '13px',
+                            fontWeight: '600',
+                            lineHeight: 1.3,
                             color: '#0f172a',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '12px'
-                          }}
-                        >
-                          -
-                        </button>
-                        <span style={{ fontSize: '12px', fontWeight: '700', minWidth: '18px', textAlign: 'center' }}>
-                          {item.quantity}
-                        </span>
+                            textDecoration: item.checked ? 'line-through' : 'none',
+                          }}>
+                            {item.name}
+                          </div>
+
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px', fontSize: '11px', color: '#64748b', flexWrap: 'wrap' }}>
+                            {item.mercadonaProduct?.brand && (
+                              <span style={{ fontWeight: '700', color: '#0f172a' }}>
+                                {item.mercadonaProduct.brand}
+                              </span>
+                            )}
+                            <span>• {itemPrice > 0 ? `${itemPrice.toFixed(2)} €/ud` : 'Sin precio'}</span>
+                            {item.sourceDishNames && item.sourceDishNames.length > 0 && (
+                              <span style={{ background: '#f1f5f9', padding: '1px 5px', borderRadius: '4px', border: '1px solid #e2e8f0', fontSize: '10px' }}>
+                                {item.sourceDishNames.join(', ')}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Remove item on top row */}
                         <button
-                          onClick={() => updateShoppingItemQuantity(item.id, 1)}
-                          style={{
-                            width: '24px',
-                            height: '24px',
-                            borderRadius: '4px',
-                            background: '#f1f5f9',
-                            border: '1px solid #cbd5e1',
-                            color: '#0f172a',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '12px'
-                          }}
+                          onClick={() => removeShoppingItem(item.id)}
+                          className="btn btn-ghost btn-icon"
+                          style={{ width: '28px', height: '28px', color: '#94a3b8', flexShrink: 0, marginLeft: 'auto' }}
+                          title="Eliminar"
                         >
-                          +
+                          <Trash2 size={14} />
                         </button>
                       </div>
 
-                      {/* Total line price */}
-                      <div style={{ textAlign: 'right', minWidth: '55px', flexShrink: 0 }}>
-                        <span className="price-text" style={{
-                          fontSize: '13px',
-                          fontWeight: '800',
-                          color: item.checked ? '#94a3b8' : '#000000',
-                        }}>
-                          {lineTotal > 0 ? `${lineTotal.toFixed(2)} €` : '-'}
-                        </span>
-                      </div>
+                      {/* Bottom Row / Side Row: Stepper and Total Price */}
+                      <div className="shopping-item-bottom-row">
+                        {/* Quantity Stepper */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
+                          <button
+                            onClick={() => updateShoppingItemQuantity(item.id, -1)}
+                            style={{
+                              width: '26px',
+                              height: '26px',
+                              borderRadius: '4px',
+                              background: '#f1f5f9',
+                              border: '1px solid #cbd5e1',
+                              color: '#0f172a',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '13px',
+                              fontWeight: '700'
+                            }}
+                          >
+                            -
+                          </button>
+                          <span style={{ fontSize: '12px', fontWeight: '700', minWidth: '22px', textAlign: 'center' }}>
+                            {item.quantity}
+                          </span>
+                          <button
+                            onClick={() => updateShoppingItemQuantity(item.id, 1)}
+                            style={{
+                              width: '26px',
+                              height: '26px',
+                              borderRadius: '4px',
+                              background: '#f1f5f9',
+                              border: '1px solid #cbd5e1',
+                              color: '#0f172a',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '13px',
+                              fontWeight: '700'
+                            }}
+                          >
+                            +
+                          </button>
+                        </div>
 
-                      {/* Remove item */}
-                      <button
-                        onClick={() => removeShoppingItem(item.id)}
-                        className="btn btn-ghost btn-icon"
-                        style={{ width: '28px', height: '28px', color: '#94a3b8', flexShrink: 0 }}
-                        title="Eliminar"
-                      >
-                        <Trash2 size={13} />
-                      </button>
+                        {/* Total line price */}
+                        <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                          <span className="price-text" style={{
+                            fontSize: '14px',
+                            fontWeight: '800',
+                            color: item.checked ? '#94a3b8' : '#000000',
+                          }}>
+                            {lineTotal > 0 ? `${lineTotal.toFixed(2)} €` : '-'}
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   );
                 })}

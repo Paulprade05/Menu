@@ -101,12 +101,12 @@ export default function MenuPlannerView() {
   };
 
   return (
-    <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '16px 16px 36px 16px' }}>
+    <div className="view-container">
       {/* Top Banner & Title Area */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '20px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px' }}>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' }}>
               <span style={{ fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#64748b' }}>
                 Planificador Semanal
               </span>
@@ -115,28 +115,32 @@ export default function MenuPlannerView() {
                 {plannedCount} de {maxPossible} comidas asignadas
               </span>
             </div>
-            <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0f172a', letterSpacing: '-0.02em' }}>
+            <h2 style={{ fontSize: '22px', fontWeight: '800', color: '#0f172a', letterSpacing: '-0.02em' }}>
               Menú Semanal
             </h2>
           </div>
 
-          {/* Days count toggle: Lunes a Sábado vs Completa (Classic White & Black) */}
+          {/* Days count toggle (Lunes a Sábado vs Completa) */}
           <div style={{
             display: 'flex',
             background: '#ffffff',
             padding: '3px',
             borderRadius: '8px',
             border: '1px solid #cbd5e1',
+            width: '100%',
+            maxWidth: '360px',
           }}>
             <button
               onClick={() => setActiveDaysCount(6)}
               style={{
-                padding: '6px 12px',
+                flex: 1,
+                padding: '6px 8px',
                 borderRadius: '6px',
-                fontSize: '12px',
+                fontSize: '11px',
                 fontWeight: '700',
                 border: 'none',
                 cursor: 'pointer',
+                textAlign: 'center',
                 background: weekMenu.activeDaysCount === 6 ? '#000000' : 'transparent',
                 color: weekMenu.activeDaysCount === 6 ? '#ffffff' : '#64748b',
                 transition: 'all 0.15s ease',
@@ -147,12 +151,14 @@ export default function MenuPlannerView() {
             <button
               onClick={() => setActiveDaysCount(7)}
               style={{
-                padding: '6px 12px',
+                flex: 1,
+                padding: '6px 8px',
                 borderRadius: '6px',
-                fontSize: '12px',
+                fontSize: '11px',
                 fontWeight: '700',
                 border: 'none',
                 cursor: 'pointer',
+                textAlign: 'center',
                 background: weekMenu.activeDaysCount === 7 ? '#000000' : 'transparent',
                 color: weekMenu.activeDaysCount === 7 ? '#ffffff' : '#64748b',
                 transition: 'all 0.15s ease',
@@ -164,45 +170,63 @@ export default function MenuPlannerView() {
         </div>
 
         {/* Quick Toolbar */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-          {dishes.length > 0 && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '8px',
+          flexWrap: 'wrap',
+          width: '100%'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            {dishes.length > 0 && (
+              <button
+                onClick={randomizeMenu}
+                className="btn btn-secondary"
+                style={{ fontSize: '12px', padding: '7px 12px' }}
+                title="Asignar platos aleatorios del banco"
+              >
+                <Sparkles size={14} />
+                <span>Aleatorio</span>
+              </button>
+            )}
+
             <button
-              onClick={randomizeMenu}
+              onClick={() => setTemplateModalOpen(true)}
               className="btn btn-secondary"
               style={{ fontSize: '12px', padding: '7px 12px' }}
-              title="Asignar platos aleatorios del banco"
+              title="Guardar o cargar menús completos"
             >
-              <Sparkles size={14} />
-              <span>Aleatorio</span>
+              <BookmarkPlus size={14} />
+              <span>Plantillas ({savedMenus.length})</span>
             </button>
-          )}
 
-          <button
-            onClick={() => setTemplateModalOpen(true)}
-            className="btn btn-secondary"
-            style={{ fontSize: '12px', padding: '7px 12px' }}
-            title="Guardar o cargar menús completos"
-          >
-            <BookmarkPlus size={14} />
-            <span>Plantillas ({savedMenus.length})</span>
-          </button>
-
-          {plannedCount > 0 && (
-            <button
-              onClick={clearWeekMenu}
-              className="btn btn-ghost"
-              style={{ fontSize: '12px', padding: '7px 10px', color: '#64748b' }}
-              title="Vaciar las comidas asignadas"
-            >
-              <RotateCcw size={14} />
-              <span>Vaciar</span>
-            </button>
-          )}
+            {plannedCount > 0 && (
+              <button
+                onClick={clearWeekMenu}
+                className="btn btn-ghost"
+                style={{ fontSize: '12px', padding: '7px 10px', color: '#64748b' }}
+                title="Vaciar las comidas asignadas"
+              >
+                <RotateCcw size={14} />
+                <span>Vaciar</span>
+              </button>
+            )}
+          </div>
 
           {/* Cost Indicator Badge */}
-          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ fontSize: '12px', color: '#64748b', fontWeight: '500' }}>Coste menú:</span>
-            <span className="price-text" style={{ fontSize: '15px', fontWeight: '800', color: '#000000' }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            background: '#ffffff',
+            border: '1px solid #e2e8f0',
+            padding: '5px 10px',
+            borderRadius: '6px',
+            flexShrink: 0
+          }}>
+            <span style={{ fontSize: '11px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>Coste menú:</span>
+            <span className="price-text" style={{ fontSize: '14px', fontWeight: '800', color: '#000000' }}>
               {menuTotalCost.toFixed(2)} €
             </span>
           </div>
@@ -214,12 +238,10 @@ export default function MenuPlannerView() {
         background: '#ffffff',
         border: '1px solid #0f172a',
         borderRadius: '12px',
-        padding: '16px 20px',
+        padding: '16px',
         marginBottom: '20px',
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
+        flexDirection: 'column',
         gap: '12px',
         boxShadow: '0 2px 4px rgba(0,0,0,0.04)'
       }}>
@@ -236,8 +258,8 @@ export default function MenuPlannerView() {
 
         <button
           onClick={handleGenerateShopping}
-          className="btn btn-primary"
-          style={{ padding: '11px 20px', fontSize: '13px', fontWeight: '700' }}
+          className="btn btn-primary btn-mobile-full"
+          style={{ padding: '12px 20px', fontSize: '13px', fontWeight: '700' }}
         >
           <ShoppingCart size={16} />
           <span>Generar Lista de la Compra</span>
@@ -262,10 +284,10 @@ export default function MenuPlannerView() {
           <p style={{ fontSize: '13px', color: '#475569', maxWidth: '440px', margin: '0 auto 16px auto', lineHeight: 1.5 }}>
             Añade tus comidas y cenas favoritas. Puedes vincular los ingredientes directamente con los precios oficiales de Mercadona Logroño.
           </p>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', flexWrap: 'wrap' }}>
             <button
               onClick={() => setIsEditorOpen(true)}
-              className="btn btn-primary"
+              className="btn btn-primary btn-mobile-full"
               style={{ padding: '9px 16px', fontSize: '13px' }}
             >
               <Plus size={16} />
@@ -273,7 +295,7 @@ export default function MenuPlannerView() {
             </button>
             <button
               onClick={() => setActiveTab('dishes')}
-              className="btn btn-secondary"
+              className="btn btn-secondary btn-mobile-full"
               style={{ padding: '9px 16px', fontSize: '13px' }}
             >
               <span>Ver Banco de Platos</span>
@@ -283,11 +305,7 @@ export default function MenuPlannerView() {
       )}
 
       {/* Days Grid Layout (Mobile friendly single col, tablet/desktop multi-col) */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(310px, 1fr))',
-        gap: '14px',
-      }}>
+      <div className="responsive-day-grid">
         {activeDays.map((day) => {
           const comidaDish = getDishById(day.comidaDishId);
           const cenaDish = getDishById(day.cenaDishId);

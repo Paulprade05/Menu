@@ -505,40 +505,42 @@ export default function DishEditorModal({
                 <span style={{ fontSize: '10px', color: '#64748b', fontWeight: '700', display: 'block', marginBottom: '4px' }}>
                   O añadir ingrediente genérico a mano:
                 </span>
-                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr auto', gap: '6px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   <input
                     type="text"
                     value={manualIngName}
                     onChange={(e) => setManualIngName(e.target.value)}
-                    placeholder="Ej: Sal, Agua, Ajo..."
+                    placeholder="Ej: Sal, Agua, Ajo, Pizca de pimienta..."
                     className="input-field"
-                    style={{ height: '32px', fontSize: '12px' }}
+                    style={{ height: '36px', fontSize: '13px' }}
                   />
-                  <input
-                    type="number"
-                    min="1"
-                    value={manualIngQty}
-                    onChange={(e) => setManualIngQty(parseInt(e.target.value) || 1)}
-                    placeholder="Cant."
-                    className="input-field"
-                    style={{ height: '32px', fontSize: '12px' }}
-                  />
-                  <input
-                    type="text"
-                    value={manualIngUnit}
-                    onChange={(e) => setManualIngUnit(e.target.value)}
-                    placeholder="ud"
-                    className="input-field"
-                    style={{ height: '32px', fontSize: '12px' }}
-                  />
-                  <button
-                    type="button"
-                    onClick={handleAddManualIngredient}
-                    className="btn btn-secondary"
-                    style={{ height: '32px', padding: '0 8px', fontSize: '12px' }}
-                  >
-                    +
-                  </button>
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    <input
+                      type="number"
+                      min="1"
+                      value={manualIngQty}
+                      onChange={(e) => setManualIngQty(parseInt(e.target.value) || 1)}
+                      placeholder="Cant."
+                      className="input-field"
+                      style={{ flex: 1, height: '36px', fontSize: '13px' }}
+                    />
+                    <input
+                      type="text"
+                      value={manualIngUnit}
+                      onChange={(e) => setManualIngUnit(e.target.value)}
+                      placeholder="ud / g / ml"
+                      className="input-field"
+                      style={{ flex: 1, height: '36px', fontSize: '13px' }}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddManualIngredient}
+                      className="btn btn-secondary"
+                      style={{ height: '36px', padding: '0 16px', fontSize: '13px', fontWeight: '700' }}
+                    >
+                      + Añadir
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

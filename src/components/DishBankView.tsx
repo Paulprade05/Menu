@@ -53,7 +53,7 @@ export default function DishBankView() {
   };
 
   return (
-    <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '16px 16px 36px 16px' }}>
+    <div className="view-container">
       {/* Top Section */}
       <div style={{
         display: 'flex',
@@ -73,15 +73,15 @@ export default function DishBankView() {
               {dishes.length} {dishes.length === 1 ? 'plato' : 'platos'} guardados
             </span>
           </div>
-          <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0f172a', letterSpacing: '-0.02em' }}>
+          <h2 style={{ fontSize: '22px', fontWeight: '800', color: '#0f172a', letterSpacing: '-0.02em' }}>
             Banco de Platos & Recetas
           </h2>
         </div>
 
         <button
           onClick={handleOpenCreate}
-          className="btn btn-primary"
-          style={{ padding: '9px 16px', fontSize: '13px' }}
+          className="btn btn-primary btn-mobile-full"
+          style={{ padding: '10px 16px', fontSize: '13px' }}
         >
           <Plus size={16} />
           <span>Añadir nuevo plato</span>
@@ -195,11 +195,7 @@ export default function DishBankView() {
           </button>
         </div>
       ) : (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(310px, 1fr))',
-          gap: '14px',
-        }}>
+        <div className="responsive-day-grid">
           {filteredDishes.map((dish) => (
             <div
               key={dish.id}

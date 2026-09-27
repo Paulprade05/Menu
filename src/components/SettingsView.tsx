@@ -89,7 +89,7 @@ export default function SettingsView() {
   };
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '16px 16px 40px 16px' }}>
+    <div className="view-container">
       {/* Title */}
       <div style={{ marginBottom: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
@@ -97,7 +97,7 @@ export default function SettingsView() {
             Preferencias
           </span>
         </div>
-        <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0f172a', letterSpacing: '-0.02em' }}>
+        <h2 style={{ fontSize: '22px', fontWeight: '800', color: '#0f172a', letterSpacing: '-0.02em' }}>
           Ajustes & Sincronización
         </h2>
         <p style={{ fontSize: '13px', color: '#64748b' }}>
@@ -129,7 +129,7 @@ export default function SettingsView() {
             </div>
           </div>
 
-          <form onSubmit={handleSavePostalCode} style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+          <form onSubmit={handleSavePostalCode} style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center', marginBottom: '12px' }}>
             <input
               type="text"
               maxLength={5}
@@ -137,14 +137,14 @@ export default function SettingsView() {
               onChange={(e) => setInputPostalCode(e.target.value)}
               placeholder="26001"
               className="input-field"
-              style={{ width: '140px', fontWeight: '700', fontSize: '14px' }}
+              style={{ width: '130px', fontWeight: '700', fontSize: '14px' }}
             />
-            <button type="submit" className="btn btn-primary" style={{ fontSize: '12px', padding: '0 16px' }}>
+            <button type="submit" className="btn btn-primary" style={{ fontSize: '12px', padding: '9px 16px' }}>
               Guardar CP
             </button>
-            <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginLeft: 'auto' }}>
               <span style={{ fontSize: '11px', color: '#64748b' }}>Almacén:</span>
-              <span style={{ fontSize: '11px', fontWeight: '700', background: '#f1f5f9', padding: '2px 8px', borderRadius: '4px', border: '1px solid #e2e8f0' }}>
+              <span style={{ fontSize: '11px', fontWeight: '700', background: '#f1f5f9', padding: '3px 8px', borderRadius: '4px', border: '1px solid #e2e8f0' }}>
                 {settings.warehouse || 'zgz1'}
               </span>
             </div>
