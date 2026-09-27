@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { MercadonaProduct, ShoppingListItem } from '@/types';
 import MercadonaSearchModal from './MercadonaSearchModal';
-import confetti from 'canvas-confetti';
 import {
   ShoppingCart,
   Plus,
@@ -12,11 +11,8 @@ import {
   Circle,
   Trash2,
   Share2,
-  Copy,
   Store,
-  Sparkles,
   ArrowRight,
-  Filter,
   Check
 } from 'lucide-react';
 
@@ -42,22 +38,6 @@ export default function ShoppingListView() {
   const [copiedNotification, setCopiedNotification] = useState(false);
   const [filterView, setFilterView] = useState<'all' | 'pending' | 'checked'>('all');
 
-  const handleToggle = (item: ShoppingListItem) => {
-    toggleShoppingItem(item.id);
-    if (!item.checked && checkedItemsCount + 1 === totalItemsCount && totalItemsCount > 0) {
-      try {
-        confetti({
-          particleCount: 80,
-          spread: 80,
-          origin: { y: 0.7 },
-          colors: ['#10b981', '#34d399', '#f59e0b']
-        });
-      } catch (e) {
-        // Ignore
-      }
-    }
-  };
-
   const handleAddProduct = (product: MercadonaProduct) => {
     addShoppingItem(
       product.displayName,
@@ -71,7 +51,7 @@ export default function ShoppingListView() {
   const handleCopyList = () => {
     if (shoppingList.length === 0) return;
 
-    let text = `🛒 *Lista de la Compra (Mercadona CP ${settings.postalCode})*\n\n`;
+    let text = `🛒 *Lista de la Compra Mercadona Logroño (CP ${settings.postalCode})*\n\n`;
     const pending = shoppingList.filter(i => !i.checked);
     const completed = shoppingList.filter(i => i.checked);
 
@@ -97,7 +77,7 @@ export default function ShoppingListView() {
     if (navigator.clipboard) {
       navigator.clipboard.writeText(text);
       setCopiedNotification(true);
-      setTimeout(() => setCopiedNotification(false), 2500);
+      setTimeout(() => setCopiedNotification(false), 2000);
     }
   };
 
@@ -122,18 +102,19 @@ export default function ShoppingListView() {
   return (
     <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '16px 16px 40px 16px' }}>
       {/* Header and Summary */}
-      <div style={{ marginBottom: '20px' }}>
+      <div style={{ marginBottom: '18px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px', marginBottom: '14px' }}>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-              <span className="badge badge-green" style={{ fontSize: '11px' }}>
-                <Store size={12} /> Precios Mercadona CP {settings.postalCode}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+              <span style={{ fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#64748b' }}>
+                Mercadona Logroño ({settings.postalCode})
               </span>
-              <span style={{ fontSize: '12px', color: 'var(--text-dim)' }}>
+              <span style={{ fontSize: '12px', color: '#94a3b8' }}>•</span>
+              <span style={{ fontSize: '12px', color: '#64748b' }}>
                 {checkedItemsCount} de {totalItemsCount} comprados
               </span>
             </div>
-            <h2 style={{ fontSize: '24px', fontWeight: '800' }}>
+            <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0f172a', letterSpacing: '-0.02em' }}>
               Lista de la Compra
             </h2>
           </div>
@@ -142,97 +123,106 @@ export default function ShoppingListView() {
             <button
               onClick={() => setIsMercadonaModalOpen(true)}
               className="btn btn-primary"
-              style={{ fontSize: '13px', padding: '9px 16px' }}
+              style={{ fontSize: '12px', padding: '8px 14px' }}
             >
-              <Plus size={16} />
+              <Plus size={15} />
               <span>Añadir producto</span>
             </button>
 
-            <button
-              onClick={handleCopyList}
-              className="btn btn-secondary"
-              style={{ fontSize: '13px', padding: '9px 14px' }}
-              title="Copiar lista para WhatsApp"
-            >
-              {copiedNotification ? (
-                <>
-                  <Check size={16} color="var(--accent-green)" />
-                  <span style={{ color: 'var(--accent-green)' }}>¡Copiado!</span>
-                </>
-              ) : (
-                <>
-                  <Share2 size={16} />
-                  <span>Compartir</span>
-                </>
-              )}
-            </button>
+            {totalItemsCount > 0 && (
+              <button
+                onClick={handleCopyList}
+                className="btn btn-secondary"
+                style={{ fontSize: '12px', padding: '8px 12px' }}
+                title="Copiar lista para WhatsApp"
+              >
+                {copiedNotification ? (
+                  <>
+                    <Check size={15} color="#000000" />
+                    <span>¡Copiado!</span>
+                  </>
+                ) : (
+                  <>
+                    <Share2 size={15} />
+                    <span>Compartir</span>
+                  </>
+                )}
+              </button>
+            )}
           </div>
         </div>
 
         {/* Total Cost & Progress Card */}
         {totalItemsCount > 0 && (
-          <div className="glass-card" style={{ padding: '18px 20px', marginBottom: '16px' }}>
+          <div style={{
+            background: '#ffffff',
+            border: '1px solid #e2e8f0',
+            borderRadius: '10px',
+            padding: '16px 18px',
+            marginBottom: '16px',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+          }}>
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
-              gap: '16px',
-              marginBottom: '14px'
+              gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+              gap: '14px',
+              marginBottom: '12px'
             }}>
               <div>
-                <span style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: '700', letterSpacing: '0.05em' }}>
+                <span style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase', fontWeight: '700' }}>
                   Total Compra
                 </span>
-                <div className="price-text" style={{ fontSize: '24px', fontWeight: '800', color: 'var(--text-main)', marginTop: '2px' }}>
+                <div className="price-text" style={{ fontSize: '22px', fontWeight: '900', color: '#0f172a', marginTop: '2px' }}>
                   {shoppingTotalCost.toFixed(2)} €
                 </div>
               </div>
 
               <div>
-                <span style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: '700', letterSpacing: '0.05em' }}>
-                  Por Pagar (Carrito)
+                <span style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase', fontWeight: '700' }}>
+                  En Carrito
                 </span>
-                <div className="price-text" style={{ fontSize: '20px', fontWeight: '700', color: 'var(--accent-green-light)', marginTop: '2px' }}>
+                <div className="price-text" style={{ fontSize: '18px', fontWeight: '700', color: '#0f172a', marginTop: '2px' }}>
                   {shoppingCheckedCost.toFixed(2)} €
                 </div>
               </div>
 
               <div>
-                <span style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: '700', letterSpacing: '0.05em' }}>
+                <span style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase', fontWeight: '700' }}>
                   Pendiente
                 </span>
-                <div className="price-text" style={{ fontSize: '20px', fontWeight: '700', color: 'var(--accent-gold)', marginTop: '2px' }}>
+                <div className="price-text" style={{ fontSize: '18px', fontWeight: '700', color: '#64748b', marginTop: '2px' }}>
                   {shoppingPendingCost.toFixed(2)} €
                 </div>
               </div>
             </div>
 
             {/* Progress Bar */}
-            <div style={{ position: 'relative', width: '100%', height: '8px', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-full)', overflow: 'hidden' }}>
+            <div style={{ position: 'relative', width: '100%', height: '6px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
               <div style={{
                 position: 'absolute',
                 top: 0,
                 left: 0,
                 height: '100%',
                 width: `${progressPercentage}%`,
-                background: 'linear-gradient(90deg, #10b981 0%, #34d399 100%)',
-                borderRadius: 'var(--radius-full)',
-                transition: 'width 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+                background: '#000000',
+                borderRadius: '4px',
+                transition: 'width 0.2s ease'
               }} />
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px', fontSize: '11px', color: 'var(--text-dim)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px', fontSize: '11px', color: '#64748b' }}>
               <span>{progressPercentage}% completado</span>
-              <div style={{ display: 'flex', gap: '10px' }}>
+              <div style={{ display: 'flex', gap: '8px' }}>
                 {checkedItemsCount > 0 && (
                   <button
                     onClick={clearCheckedShoppingItems}
-                    style={{ background: 'none', border: 'none', color: 'var(--text-dim)', cursor: 'pointer', textDecoration: 'underline' }}
+                    style={{ background: 'none', border: 'none', color: '#475569', cursor: 'pointer', textDecoration: 'underline' }}
                   >
                     Borrar comprados
                   </button>
                 )}
                 <button
                   onClick={clearAllShoppingItems}
-                  style={{ background: 'none', border: 'none', color: 'var(--accent-rose)', cursor: 'pointer' }}
+                  style={{ background: 'none', border: 'none', color: '#dc2626', cursor: 'pointer' }}
                 >
                   Vaciar lista
                 </button>
@@ -243,18 +233,18 @@ export default function ShoppingListView() {
 
         {/* Filter View Selector */}
         {totalItemsCount > 0 && (
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+          <div style={{ display: 'flex', gap: '6px', marginBottom: '14px' }}>
             <button
               onClick={() => setFilterView('all')}
               style={{
-                padding: '6px 14px',
-                borderRadius: 'var(--radius-full)',
-                fontSize: '12px',
-                fontWeight: '600',
+                padding: '4px 12px',
+                borderRadius: '20px',
+                fontSize: '11px',
+                fontWeight: '700',
                 cursor: 'pointer',
-                background: filterView === 'all' ? 'var(--accent-green)' : 'var(--bg-secondary)',
-                color: filterView === 'all' ? '#070a12' : 'var(--text-dim)',
-                border: '1px solid var(--border-subtle)',
+                background: filterView === 'all' ? '#000000' : '#ffffff',
+                color: filterView === 'all' ? '#ffffff' : '#64748b',
+                border: filterView === 'all' ? '1px solid #000000' : '1px solid #cbd5e1',
               }}
             >
               Todos ({totalItemsCount})
@@ -262,14 +252,14 @@ export default function ShoppingListView() {
             <button
               onClick={() => setFilterView('pending')}
               style={{
-                padding: '6px 14px',
-                borderRadius: 'var(--radius-full)',
-                fontSize: '12px',
-                fontWeight: '600',
+                padding: '4px 12px',
+                borderRadius: '20px',
+                fontSize: '11px',
+                fontWeight: '700',
                 cursor: 'pointer',
-                background: filterView === 'pending' ? 'var(--accent-gold)' : 'var(--bg-secondary)',
-                color: filterView === 'pending' ? '#070a12' : 'var(--text-dim)',
-                border: '1px solid var(--border-subtle)',
+                background: filterView === 'pending' ? '#000000' : '#ffffff',
+                color: filterView === 'pending' ? '#ffffff' : '#64748b',
+                border: filterView === 'pending' ? '1px solid #000000' : '1px solid #cbd5e1',
               }}
             >
               Pendientes ({totalItemsCount - checkedItemsCount})
@@ -277,14 +267,14 @@ export default function ShoppingListView() {
             <button
               onClick={() => setFilterView('checked')}
               style={{
-                padding: '6px 14px',
-                borderRadius: 'var(--radius-full)',
-                fontSize: '12px',
-                fontWeight: '600',
+                padding: '4px 12px',
+                borderRadius: '20px',
+                fontSize: '11px',
+                fontWeight: '700',
                 cursor: 'pointer',
-                background: filterView === 'checked' ? 'var(--accent-green-light)' : 'var(--bg-secondary)',
-                color: filterView === 'checked' ? '#070a12' : 'var(--text-dim)',
-                border: '1px solid var(--border-subtle)',
+                background: filterView === 'checked' ? '#000000' : '#ffffff',
+                color: filterView === 'checked' ? '#ffffff' : '#64748b',
+                border: filterView === 'checked' ? '1px solid #000000' : '1px solid #cbd5e1',
               }}
             >
               Comprados ({checkedItemsCount})
@@ -298,61 +288,61 @@ export default function ShoppingListView() {
         <div style={{
           textAlign: 'center',
           padding: '60px 20px',
-          background: 'var(--bg-secondary)',
-          borderRadius: 'var(--radius-lg)',
-          border: '1px dashed var(--border-subtle)'
+          background: '#ffffff',
+          borderRadius: '12px',
+          border: '1px dashed #cbd5e1'
         }}>
-          <ShoppingCart size={48} color="var(--accent-green)" style={{ margin: '0 auto 16px auto', opacity: 0.8 }} />
-          <h3 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '8px' }}>
+          <ShoppingCart size={40} color="#94a3b8" style={{ margin: '0 auto 12px auto' }} />
+          <h3 style={{ fontSize: '16px', fontWeight: '800', color: '#0f172a', marginBottom: '6px' }}>
             Tu lista de la compra está vacía
           </h3>
-          <p style={{ fontSize: '14px', color: 'var(--text-dim)', maxWidth: '400px', margin: '0 auto 20px auto', lineHeight: 1.5 }}>
-            Ve al <strong>Menú Semanal</strong> y pulsa el botón &quot;Generar Lista de la Compra&quot; para añadir automáticamente los ingredientes de tus comidas y cenas con precios de Mercadona.
+          <p style={{ fontSize: '13px', color: '#64748b', maxWidth: '380px', margin: '0 auto 18px auto', lineHeight: 1.5 }}>
+            Ve al <strong>Menú Semanal</strong> y pulsa &quot;Generar Lista de la Compra&quot; o añade productos sueltos usando el buscador de Mercadona.
           </p>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
             <button
               onClick={() => setActiveTab('menu')}
               className="btn btn-primary"
-              style={{ padding: '12px 20px' }}
+              style={{ padding: '9px 16px', fontSize: '12px' }}
             >
               <span>Ir al Menú Semanal</span>
-              <ArrowRight size={16} />
+              <ArrowRight size={14} />
             </button>
             <button
               onClick={() => setIsMercadonaModalOpen(true)}
               className="btn btn-secondary"
-              style={{ padding: '12px 18px' }}
+              style={{ padding: '9px 16px', fontSize: '12px' }}
             >
-              <Plus size={16} />
+              <Plus size={14} />
               <span>Añadir producto suelto</span>
             </button>
           </div>
         </div>
       ) : (
-        /* Categorized List of Items */
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        /* Categorized Items List */
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           {Array.from(categoriesMap.entries()).map(([categoryName, items]) => (
             <div key={categoryName}>
               {/* Category Header */}
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px',
-                marginBottom: '10px',
-                paddingBottom: '6px',
-                borderBottom: '1px solid var(--border-subtle)'
+                gap: '6px',
+                marginBottom: '8px',
+                paddingBottom: '4px',
+                borderBottom: '1px solid #e2e8f0'
               }}>
-                <Store size={15} color="var(--accent-green)" />
-                <h4 style={{ fontSize: '14px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-muted)' }}>
+                <Store size={14} color="#0f172a" />
+                <h4 style={{ fontSize: '12px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.04em', color: '#0f172a' }}>
                   {categoryName}
                 </h4>
-                <span style={{ fontSize: '11px', color: 'var(--text-dim)', marginLeft: 'auto' }}>
+                <span style={{ fontSize: '11px', color: '#64748b', marginLeft: 'auto' }}>
                   {items.length} {items.length === 1 ? 'artículo' : 'artículos'}
                 </span>
               </div>
 
               {/* Items List */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 {items.map((item) => {
                   const itemPrice = (item.mercadonaProduct?.price ?? item.estimatedPrice ?? 0);
                   const lineTotal = itemPrice * (item.quantity || 1);
@@ -360,53 +350,53 @@ export default function ShoppingListView() {
                   return (
                     <div
                       key={item.id}
-                      className="glass-card"
                       style={{
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '12px',
-                        padding: '12px 14px',
-                        background: item.checked ? 'rgba(16, 185, 129, 0.04)' : 'var(--bg-card)',
-                        border: item.checked ? '1px solid rgba(16, 185, 129, 0.2)' : '1px solid var(--border-subtle)',
-                        opacity: item.checked ? 0.65 : 1,
-                        transition: 'all 0.18s ease',
+                        gap: '10px',
+                        padding: '10px 12px',
+                        background: item.checked ? '#f8fafc' : '#ffffff',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '8px',
+                        opacity: item.checked ? 0.6 : 1,
+                        transition: 'all 0.15s ease',
                       }}
                     >
                       {/* Checkbox */}
                       <button
-                        onClick={() => handleToggle(item)}
+                        onClick={() => toggleShoppingItem(item.id)}
                         style={{
                           background: 'transparent',
                           border: 'none',
                           cursor: 'pointer',
-                          padding: '4px',
+                          padding: '2px',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          color: item.checked ? 'var(--accent-green)' : 'var(--text-dim)',
+                          color: item.checked ? '#000000' : '#94a3b8',
                           flexShrink: 0
                         }}
                       >
                         {item.checked ? (
-                          <CheckCircle2 size={24} color="#10b981" />
+                          <CheckCircle2 size={22} color="#000000" />
                         ) : (
-                          <Circle size={24} />
+                          <Circle size={22} />
                         )}
                       </button>
 
                       {/* Product Thumbnail */}
                       {item.mercadonaProduct?.thumbnail && (
                         <div style={{
-                          width: '44px',
-                          height: '44px',
-                          borderRadius: '8px',
-                          background: '#ffffff',
+                          width: '38px',
+                          height: '38px',
+                          borderRadius: '6px',
+                          background: '#f8fafc',
                           overflow: 'hidden',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                           flexShrink: 0,
-                          border: '1px solid var(--border-subtle)'
+                          border: '1px solid #e2e8f0'
                         }}>
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
@@ -421,9 +411,9 @@ export default function ShoppingListView() {
                       {/* Details */}
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{
-                          fontSize: '14px',
+                          fontSize: '13px',
                           fontWeight: '600',
-                          color: 'var(--text-main)',
+                          color: '#0f172a',
                           textDecoration: item.checked ? 'line-through' : 'none',
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
@@ -432,15 +422,15 @@ export default function ShoppingListView() {
                           {item.name}
                         </div>
 
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px', fontSize: '11px', color: 'var(--text-dim)', flexWrap: 'wrap' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '1px', fontSize: '11px', color: '#64748b', flexWrap: 'wrap' }}>
                           {item.mercadonaProduct?.brand && (
-                            <span style={{ color: 'var(--accent-green)', fontWeight: '600' }}>
+                            <span style={{ fontWeight: '700', color: '#0f172a' }}>
                               {item.mercadonaProduct.brand}
                             </span>
                           )}
-                          <span>• {itemPrice > 0 ? `${itemPrice.toFixed(2)} € / ud` : 'Sin precio'}</span>
+                          <span>• {itemPrice > 0 ? `${itemPrice.toFixed(2)} €/ud` : 'Sin precio'}</span>
                           {item.sourceDishNames && item.sourceDishNames.length > 0 && (
-                            <span style={{ background: 'rgba(255,255,255,0.06)', padding: '1px 6px', borderRadius: '4px' }}>
+                            <span style={{ background: '#f1f5f9', padding: '1px 5px', borderRadius: '4px', border: '1px solid #e2e8f0' }}>
                               {item.sourceDishNames.join(', ')}
                             </span>
                           )}
@@ -448,42 +438,42 @@ export default function ShoppingListView() {
                       </div>
 
                       {/* Quantity Stepper */}
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '3px', flexShrink: 0 }}>
                         <button
                           onClick={() => updateShoppingItemQuantity(item.id, -1)}
                           style={{
-                            width: '26px',
-                            height: '26px',
-                            borderRadius: '6px',
-                            background: 'var(--bg-secondary)',
-                            border: '1px solid var(--border-subtle)',
-                            color: 'var(--text-main)',
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '4px',
+                            background: '#f1f5f9',
+                            border: '1px solid #cbd5e1',
+                            color: '#0f172a',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            fontSize: '13px'
+                            fontSize: '12px'
                           }}
                         >
                           -
                         </button>
-                        <span style={{ fontSize: '13px', fontWeight: '700', minWidth: '20px', textAlign: 'center' }}>
+                        <span style={{ fontSize: '12px', fontWeight: '700', minWidth: '18px', textAlign: 'center' }}>
                           {item.quantity}
                         </span>
                         <button
                           onClick={() => updateShoppingItemQuantity(item.id, 1)}
                           style={{
-                            width: '26px',
-                            height: '26px',
-                            borderRadius: '6px',
-                            background: 'var(--bg-secondary)',
-                            border: '1px solid var(--border-subtle)',
-                            color: 'var(--text-main)',
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '4px',
+                            background: '#f1f5f9',
+                            border: '1px solid #cbd5e1',
+                            color: '#0f172a',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            fontSize: '13px'
+                            fontSize: '12px'
                           }}
                         >
                           +
@@ -491,11 +481,11 @@ export default function ShoppingListView() {
                       </div>
 
                       {/* Total line price */}
-                      <div style={{ textAlign: 'right', minWidth: '60px', flexShrink: 0 }}>
+                      <div style={{ textAlign: 'right', minWidth: '55px', flexShrink: 0 }}>
                         <span className="price-text" style={{
-                          fontSize: '15px',
-                          fontWeight: '700',
-                          color: item.checked ? 'var(--text-dim)' : 'var(--accent-green-light)',
+                          fontSize: '13px',
+                          fontWeight: '800',
+                          color: item.checked ? '#94a3b8' : '#000000',
                         }}>
                           {lineTotal > 0 ? `${lineTotal.toFixed(2)} €` : '-'}
                         </span>
@@ -505,10 +495,10 @@ export default function ShoppingListView() {
                       <button
                         onClick={() => removeShoppingItem(item.id)}
                         className="btn btn-ghost btn-icon"
-                        style={{ width: '30px', height: '30px', color: 'var(--text-dim)', flexShrink: 0 }}
-                        title="Eliminar de la lista"
+                        style={{ width: '28px', height: '28px', color: '#94a3b8', flexShrink: 0 }}
+                        title="Eliminar"
                       >
-                        <Trash2 size={14} />
+                        <Trash2 size={13} />
                       </button>
                     </div>
                   );

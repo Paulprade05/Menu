@@ -26,6 +26,10 @@ const QUICK_SEARCH_CHIPS = [
   'Queso',
   'Aguacate',
   'Aceite',
+  'Café',
+  'Pan',
+  'Yogur',
+  'Solomillo'
 ];
 
 export default function MercadonaSearchModal({
@@ -40,6 +44,7 @@ export default function MercadonaSearchModal({
   const [results, setResults] = useState<MercadonaProduct[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [totalCatalogSize, setTotalCatalogSize] = useState<number>(4332);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -67,7 +72,7 @@ export default function MercadonaSearchModal({
 
     const timer = setTimeout(() => {
       searchProducts(trimmed);
-    }, 350);
+    }, 200);
 
     return () => clearTimeout(timer);
   }, [query, isOpen]);
@@ -84,6 +89,9 @@ export default function MercadonaSearchModal({
       }
       const data = await res.json();
       setResults(data.hits || []);
+      if (data.totalCatalogSize) {
+        setTotalCatalogSize(data.totalCatalogSize);
+      }
     } catch (err: any) {
       console.error(err);
       setError(err.message || 'No se pudieron cargar los productos');
@@ -96,52 +104,52 @@ export default function MercadonaSearchModal({
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxHeight: '88vh' }}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxHeight: '90vh' }}>
         <div className="sheet-handle" />
 
         {/* Modal Header */}
         <div className="modal-header">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '8px',
-              background: 'var(--accent-green-subtle)',
+              width: '34px',
+              height: '34px',
+              borderRadius: '6px',
+              background: '#000000',
+              color: '#ffffff',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: 'var(--accent-green)'
             }}>
               <Store size={18} />
             </div>
             <div>
-              <h3 style={{ fontSize: '16px', fontWeight: '700' }}>{title}</h3>
-              <p style={{ fontSize: '11px', color: 'var(--text-dim)' }}>
-                Precios oficiales Mercadona • CP {settings.postalCode}
+              <h3 style={{ fontSize: '15px', fontWeight: '800', color: '#0f172a' }}>{title}</h3>
+              <p style={{ fontSize: '11px', color: '#64748b' }}>
+                Catálogo Mercadona Logroño ({totalCatalogSize.toLocaleString()} productos)
               </p>
             </div>
           </div>
           <button onClick={onClose} className="btn btn-ghost btn-icon">
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
         {/* Search Input Box */}
-        <div style={{ padding: '16px 20px 8px 20px' }}>
+        <div style={{ padding: '14px 18px 8px 18px' }}>
           <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
             <Search
               size={18}
-              color="var(--text-dim)"
-              style={{ position: 'absolute', left: '14px', pointerEvents: 'none' }}
+              color="#94a3b8"
+              style={{ position: 'absolute', left: '12px', pointerEvents: 'none' }}
             />
             <input
               ref={inputRef}
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Ej: Tomate frito, pechuga de pollo, arroz..."
+              placeholder="Buscar por nombre, marca o tipo (ej: solomillo, leche, arroz)..."
               className="input-field"
-              style={{ paddingLeft: '40px', paddingRight: '36px', height: '46px', fontSize: '15px' }}
+              style={{ paddingLeft: '38px', paddingRight: '36px', height: '44px' }}
             />
             {query && (
               <button
@@ -151,7 +159,7 @@ export default function MercadonaSearchModal({
                   right: '12px',
                   background: 'transparent',
                   border: 'none',
-                  color: 'var(--text-dim)',
+                  color: '#94a3b8',
                   cursor: 'pointer',
                   padding: '4px'
                 }}
@@ -174,16 +182,16 @@ export default function MercadonaSearchModal({
                 key={chip}
                 onClick={() => setQuery(chip)}
                 style={{
-                  background: query.toLowerCase() === chip.toLowerCase() ? 'var(--accent-green-subtle)' : 'var(--bg-tertiary)',
-                  color: query.toLowerCase() === chip.toLowerCase() ? 'var(--accent-green-light)' : 'var(--text-muted)',
-                  border: query.toLowerCase() === chip.toLowerCase() ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid var(--border-subtle)',
-                  borderRadius: 'var(--radius-full)',
+                  background: query.toLowerCase() === chip.toLowerCase() ? '#000000' : '#f8fafc',
+                  color: query.toLowerCase() === chip.toLowerCase() ? '#ffffff' : '#475569',
+                  border: query.toLowerCase() === chip.toLowerCase() ? '1px solid #000000' : '1px solid #e2e8f0',
+                  borderRadius: '20px',
                   padding: '4px 12px',
-                  fontSize: '12px',
-                  fontWeight: '500',
+                  fontSize: '11px',
+                  fontFamily: 'Montserrat',
+                  fontWeight: '600',
                   whiteSpace: 'nowrap',
                   cursor: 'pointer',
-                  transition: 'all 0.15s ease'
                 }}
               >
                 {chip}
@@ -193,48 +201,57 @@ export default function MercadonaSearchModal({
         </div>
 
         {/* Results Area */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '8px 20px 20px 20px' }}>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '8px 18px 20px 18px' }}>
           {isLoading && (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 0', gap: '12px' }}>
-              <Loader2 size={32} className="spin-anim" color="var(--accent-green)" />
-              <span style={{ fontSize: '13px', color: 'var(--text-dim)' }}>Buscando en catálogo de Mercadona...</span>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 0', gap: '10px' }}>
+              <Loader2 size={28} className="spin-anim" color="#000000" />
+              <span style={{ fontSize: '12px', color: '#64748b' }}>Buscando en los 4.332 productos de Mercadona...</span>
             </div>
           )}
 
           {error && !isLoading && (
             <div style={{
-              background: 'var(--accent-rose-subtle)',
-              border: '1px solid rgba(244, 63, 94, 0.25)',
-              borderRadius: 'var(--radius-sm)',
-              padding: '16px',
+              background: '#fef2f2',
+              border: '1px solid #fecaca',
+              borderRadius: '8px',
+              padding: '14px',
               display: 'flex',
               alignItems: 'center',
-              gap: '12px',
-              color: 'var(--accent-rose)',
+              gap: '10px',
+              color: '#dc2626',
               fontSize: '13px',
-              marginTop: '10px'
+              marginTop: '8px'
             }}>
-              <AlertCircle size={20} />
+              <AlertCircle size={18} />
               <span>{error}</span>
             </div>
           )}
 
           {!isLoading && !error && results.length === 0 && query.trim() !== '' && (
-            <div style={{ textAlign: 'center', padding: '40px 10px', color: 'var(--text-dim)' }}>
-              <p style={{ fontSize: '15px', fontWeight: '600', marginBottom: '6px' }}>No se encontraron productos</p>
-              <p style={{ fontSize: '13px' }}>Prueba con un término más general (ej: &quot;leche&quot;, &quot;pan&quot;, &quot;aceite&quot;)</p>
+            <div style={{ textAlign: 'center', padding: '40px 10px', color: '#64748b' }}>
+              <p style={{ fontSize: '14px', fontWeight: '700', color: '#0f172a', marginBottom: '4px' }}>
+                No se encontraron productos para &quot;{query}&quot;
+              </p>
+              <p style={{ fontSize: '12px' }}>Prueba con una palabra más corta (ej: &quot;leche&quot;, &quot;tomate&quot;, &quot;queso&quot;)</p>
             </div>
           )}
 
           {!isLoading && !error && results.length === 0 && query.trim() === '' && (
-            <div style={{ textAlign: 'center', padding: '36px 10px', color: 'var(--text-dim)' }}>
-              <Sparkles size={32} color="var(--accent-green)" style={{ margin: '0 auto 12px auto', opacity: 0.8 }} />
-              <p style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-main)', marginBottom: '4px' }}>
-                Conexión en directo con Mercadona
+            <div style={{ textAlign: 'center', padding: '36px 10px', color: '#64748b' }}>
+              <Store size={36} color="#000000" style={{ margin: '0 auto 10px auto', opacity: 0.8 }} />
+              <p style={{ fontSize: '14px', fontWeight: '700', color: '#0f172a', marginBottom: '4px' }}>
+                Todos los productos de Mercadona
               </p>
-              <p style={{ fontSize: '12px', maxWidth: '320px', margin: '0 auto' }}>
-                Escribe cualquier ingrediente o producto para ver su precio exacto, foto y envase.
+              <p style={{ fontSize: '12px', maxWidth: '340px', margin: '0 auto', color: '#64748b' }}>
+                Escribe cualquier alimento para ver su precio exacto, fotografía oficial y formato.
               </p>
+            </div>
+          )}
+
+          {/* Results count banner */}
+          {!isLoading && results.length > 0 && (
+            <div style={{ fontSize: '11px', color: '#64748b', marginBottom: '8px', fontWeight: '600' }}>
+              {results.length} productos encontrados:
             </div>
           )}
 
@@ -247,28 +264,30 @@ export default function MercadonaSearchModal({
                   onSelectProduct(product);
                   onClose();
                 }}
-                className="glass-card"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: '12px',
-                  padding: '10px 14px',
+                  padding: '10px 12px',
+                  background: '#ffffff',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '8px',
                   cursor: 'pointer',
-                  borderRadius: 'var(--radius-sm)',
+                  transition: 'border-color 0.15s ease',
                 }}
               >
                 {/* Product Thumbnail */}
                 <div style={{
-                  width: '56px',
-                  height: '56px',
-                  borderRadius: '10px',
-                  background: '#ffffff',
+                  width: '50px',
+                  height: '50px',
+                  borderRadius: '6px',
+                  background: '#f8fafc',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   overflow: 'hidden',
                   flexShrink: 0,
-                  border: '1px solid var(--border-subtle)'
+                  border: '1px solid #e2e8f0'
                 }}>
                   {product.thumbnail ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -279,7 +298,7 @@ export default function MercadonaSearchModal({
                       loading="lazy"
                     />
                   ) : (
-                    <Store size={22} color="#007a3d" />
+                    <Store size={20} color="#64748b" />
                   )}
                 </div>
 
@@ -290,24 +309,24 @@ export default function MercadonaSearchModal({
                       fontSize: '10px',
                       fontWeight: '700',
                       textTransform: 'uppercase',
-                      color: 'var(--accent-green)',
-                      background: 'var(--accent-green-subtle)',
+                      color: '#0f172a',
+                      background: '#f1f5f9',
                       padding: '1px 6px',
                       borderRadius: '4px',
                     }}>
                       {product.brand || 'Mercadona'}
                     </span>
                     {product.packaging && (
-                      <span style={{ fontSize: '11px', color: 'var(--text-dim)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <span style={{ fontSize: '11px', color: '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {product.packaging}
                       </span>
                     )}
                   </div>
                   <h4 style={{
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    lineHeight: '1.25',
-                    color: 'var(--text-main)',
+                    fontSize: '13px',
+                    fontWeight: '700',
+                    lineHeight: '1.3',
+                    color: '#0f172a',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
@@ -315,29 +334,28 @@ export default function MercadonaSearchModal({
                     {product.displayName}
                   </h4>
                   {product.referencePrice && (
-                    <div style={{ fontSize: '11px', color: 'var(--text-dim)', marginTop: '2px' }}>
+                    <div style={{ fontSize: '11px', color: '#64748b', marginTop: '1px' }}>
                       ({product.referencePrice.toFixed(2)} €/{product.referenceFormat || 'kg'})
                     </div>
                   )}
                 </div>
 
                 {/* Price and Add Action */}
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px', flexShrink: 0 }}>
-                  <span className="price-text" style={{ fontSize: '16px', color: 'var(--accent-green-light)', fontWeight: '700' }}>
-                    {product.price > 0 ? `${product.price.toFixed(2)} €` : 'Consultar'}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '3px', flexShrink: 0 }}>
+                  <span className="price-text" style={{ fontSize: '15px', color: '#000000', fontWeight: '800' }}>
+                    {product.price > 0 ? `${product.price.toFixed(2)} €` : '-'}
                   </span>
                   <div style={{
-                    width: '28px',
-                    height: '28px',
-                    borderRadius: 'var(--radius-full)',
-                    background: 'var(--accent-green-subtle)',
-                    color: 'var(--accent-green)',
+                    width: '26px',
+                    height: '26px',
+                    borderRadius: '6px',
+                    background: '#000000',
+                    color: '#ffffff',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    transition: 'all 0.15s ease',
                   }}>
-                    <Plus size={16} />
+                    <Plus size={15} />
                   </div>
                 </div>
               </div>

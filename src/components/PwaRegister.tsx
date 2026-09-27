@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
-import { Share2, PlusSquare, X } from 'lucide-react';
+import { Share2, X } from 'lucide-react';
 
 export default function PwaRegister() {
   const { loadFromCloud } = useApp();
@@ -18,7 +18,7 @@ export default function PwaRegister() {
       });
     }
 
-    // 2. Auto load sync code from URL if present (?sync=MERC-XXXX)
+    // 2. Auto load sync code from URL if present (?sync=LOGRO-XXX)
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
       const syncCode = urlParams.get('sync');
@@ -42,37 +42,36 @@ export default function PwaRegister() {
   return (
     <div style={{
       position: 'fixed',
-      bottom: '84px',
+      bottom: '76px',
       left: '12px',
       right: '12px',
       zIndex: 45,
-      background: 'rgba(13, 19, 34, 0.95)',
-      backdropFilter: 'blur(20px)',
-      WebkitBackdropFilter: 'blur(20px)',
-      border: '1px solid rgba(16, 185, 129, 0.4)',
-      borderRadius: 'var(--radius-md)',
+      background: '#000000',
+      color: '#ffffff',
+      border: '1px solid #1e293b',
+      borderRadius: '10px',
       padding: '12px 14px',
       display: 'flex',
       alignItems: 'center',
-      gap: '12px',
-      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6)'
+      gap: '10px',
+      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)'
     }}>
       <div style={{
-        width: '36px',
-        height: '36px',
-        borderRadius: '10px',
-        background: 'var(--accent-green-subtle)',
-        color: 'var(--accent-green)',
+        width: '30px',
+        height: '30px',
+        borderRadius: '6px',
+        background: '#ffffff',
+        color: '#000000',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         flexShrink: 0
       }}>
-        <Share2 size={18} />
+        <Share2 size={16} />
       </div>
 
-      <div style={{ flex: 1, minWidth: 0, fontSize: '12px', color: 'var(--text-main)', lineHeight: 1.35 }}>
-        <strong>Instalar en tu iPhone:</strong> Pulsa <Share2 size={12} style={{ display: 'inline' }} /> y luego <em>&quot;Añadir a pantalla de inicio&quot;</em> para usarla como App.
+      <div style={{ flex: 1, minWidth: 0, fontSize: '12px', color: '#f8fafc', lineHeight: 1.35 }}>
+        <strong>Instalar en tu iPhone:</strong> Pulsa <Share2 size={11} style={{ display: 'inline' }} /> y selecciona <em>&quot;Añadir a pantalla de inicio&quot;</em>.
       </div>
 
       <button
@@ -83,7 +82,7 @@ export default function PwaRegister() {
         style={{
           background: 'transparent',
           border: 'none',
-          color: 'var(--text-dim)',
+          color: '#94a3b8',
           cursor: 'pointer',
           padding: '4px'
         }}

@@ -9,11 +9,7 @@ import {
   Plus,
   Trash2,
   Store,
-  Sparkles,
-  UtensilsCrossed,
-  Tag,
-  DollarSign,
-  Info
+  UtensilsCrossed
 } from 'lucide-react';
 
 interface DishEditorModalProps {
@@ -35,8 +31,6 @@ const COMMON_TAGS = [
   'Arroz',
   'Guiso',
   'Horno',
-  'Keto',
-  'Fitness',
 ];
 
 export default function DishEditorModal({
@@ -60,7 +54,6 @@ export default function DishEditorModal({
   const [manualIngUnit, setManualIngUnit] = useState('ud');
   const [manualIngPrice, setManualIngPrice] = useState('0');
 
-  // Mercadona search modal trigger
   const [isMercadonaModalOpen, setIsMercadonaModalOpen] = useState(false);
 
   useEffect(() => {
@@ -140,7 +133,6 @@ export default function DishEditorModal({
     }));
   };
 
-  // Calculate live total cost
   const totalCost = ingredients.reduce((acc, ing) => {
     const p = ing.mercadonaProduct?.price ?? ing.estimatedPrice ?? 0;
     return acc + (p * (ing.quantity || 1));
@@ -182,36 +174,36 @@ export default function DishEditorModal({
           <div className="modal-header">
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <div style={{
-                width: '34px',
-                height: '34px',
-                borderRadius: '10px',
-                background: 'var(--accent-green-subtle)',
-                color: 'var(--accent-green)',
+                width: '32px',
+                height: '32px',
+                borderRadius: '6px',
+                background: '#000000',
+                color: '#ffffff',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-                <UtensilsCrossed size={18} />
+                <UtensilsCrossed size={16} />
               </div>
               <div>
-                <h3 style={{ fontSize: '17px', fontWeight: '800' }}>
-                  {dishToEdit ? 'Editar plato y alimentos' : 'Nuevo plato para el banco'}
+                <h3 style={{ fontSize: '15px', fontWeight: '800', color: '#0f172a' }}>
+                  {dishToEdit ? 'Editar plato y alimentos' : 'Nuevo plato'}
                 </h3>
-                <p style={{ fontSize: '11px', color: 'var(--text-dim)' }}>
-                  Añade ingredientes de Mercadona para calcular el coste y la lista
+                <p style={{ fontSize: '11px', color: '#64748b' }}>
+                  Añade ingredientes de Mercadona Logroño para calcular costes
                 </p>
               </div>
             </div>
             <button onClick={onClose} className="btn btn-ghost btn-icon">
-              <X size={20} />
+              <X size={18} />
             </button>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 24px 20px' }}>
+          <form onSubmit={handleSubmit} style={{ flex: 1, overflowY: 'auto', padding: '16px 18px 24px 18px' }}>
             {/* Dish Name */}
             <div style={{ marginBottom: '14px' }}>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: '6px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', color: '#64748b', marginBottom: '6px' }}>
                 Nombre del plato *
               </label>
               <input
@@ -219,87 +211,75 @@ export default function DishEditorModal({
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Ej: Lentejas con verduras y chorizo, Merluza en salsa..."
+                placeholder="Ej: Lentejas con verduras, Solomillo al ajillo..."
                 className="input-field"
-                style={{ fontSize: '15px', fontWeight: '600' }}
+                style={{ fontWeight: '600' }}
               />
             </div>
 
             {/* Meal Type */}
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: '6px' }}>
-                ¿Para qué momento es ideal?
+            <div style={{ marginBottom: '14px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', color: '#64748b', marginBottom: '6px' }}>
+                Momento
               </label>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
                 <button
                   type="button"
                   onClick={() => setType('comida')}
                   style={{
-                    padding: '10px',
-                    borderRadius: 'var(--radius-sm)',
-                    border: type === 'comida' ? '1px solid var(--accent-gold)' : '1px solid var(--border-subtle)',
-                    background: type === 'comida' ? 'var(--accent-gold-subtle)' : 'var(--bg-secondary)',
-                    color: type === 'comida' ? 'var(--accent-gold)' : 'var(--text-muted)',
+                    padding: '8px',
+                    borderRadius: '6px',
+                    border: type === 'comida' ? '1px solid #000000' : '1px solid #cbd5e1',
+                    background: type === 'comida' ? '#000000' : '#ffffff',
+                    color: type === 'comida' ? '#ffffff' : '#475569',
                     fontWeight: '700',
-                    fontSize: '13px',
+                    fontSize: '12px',
                     cursor: 'pointer',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '4px'
                   }}
                 >
-                  <span>☀️ Comida</span>
+                  ☀️ Comida
                 </button>
                 <button
                   type="button"
                   onClick={() => setType('cena')}
                   style={{
-                    padding: '10px',
-                    borderRadius: 'var(--radius-sm)',
-                    border: type === 'cena' ? '1px solid #8b5cf6' : '1px solid var(--border-subtle)',
-                    background: type === 'cena' ? 'rgba(139, 92, 246, 0.15)' : 'var(--bg-secondary)',
-                    color: type === 'cena' ? '#a78bfa' : 'var(--text-muted)',
+                    padding: '8px',
+                    borderRadius: '6px',
+                    border: type === 'cena' ? '1px solid #000000' : '1px solid #cbd5e1',
+                    background: type === 'cena' ? '#000000' : '#ffffff',
+                    color: type === 'cena' ? '#ffffff' : '#475569',
                     fontWeight: '700',
-                    fontSize: '13px',
+                    fontSize: '12px',
                     cursor: 'pointer',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '4px'
                   }}
                 >
-                  <span>🌙 Cena</span>
+                  🌙 Cena
                 </button>
                 <button
                   type="button"
                   onClick={() => setType('ambas')}
                   style={{
-                    padding: '10px',
-                    borderRadius: 'var(--radius-sm)',
-                    border: type === 'ambas' ? '1px solid var(--accent-green)' : '1px solid var(--border-subtle)',
-                    background: type === 'ambas' ? 'var(--accent-green-subtle)' : 'var(--bg-secondary)',
-                    color: type === 'ambas' ? 'var(--accent-green-light)' : 'var(--text-muted)',
+                    padding: '8px',
+                    borderRadius: '6px',
+                    border: type === 'ambas' ? '1px solid #000000' : '1px solid #cbd5e1',
+                    background: type === 'ambas' ? '#000000' : '#ffffff',
+                    color: type === 'ambas' ? '#ffffff' : '#475569',
                     fontWeight: '700',
-                    fontSize: '13px',
+                    fontSize: '12px',
                     cursor: 'pointer',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '4px'
                   }}
                 >
-                  <span>✨ Ambas</span>
+                  ✨ Ambas
                 </button>
               </div>
             </div>
 
             {/* Tags */}
-            <div style={{ marginBottom: '18px' }}>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: '6px' }}>
-                Etiquetas / Categorías
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', color: '#64748b', marginBottom: '6px' }}>
+                Etiquetas
               </label>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginBottom: '6px' }}>
                 {COMMON_TAGS.map(tag => {
                   const isChecked = tags.includes(tag);
                   return (
@@ -309,13 +289,13 @@ export default function DishEditorModal({
                       onClick={() => toggleTag(tag)}
                       style={{
                         padding: '4px 10px',
-                        borderRadius: 'var(--radius-full)',
-                        fontSize: '12px',
-                        fontWeight: '500',
+                        borderRadius: '20px',
+                        fontSize: '11px',
+                        fontWeight: '600',
                         cursor: 'pointer',
-                        background: isChecked ? 'var(--accent-green-subtle)' : 'var(--bg-secondary)',
-                        color: isChecked ? 'var(--accent-green-light)' : 'var(--text-dim)',
-                        border: isChecked ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid var(--border-subtle)',
+                        background: isChecked ? '#000000' : '#f8fafc',
+                        color: isChecked ? '#ffffff' : '#475569',
+                        border: isChecked ? '1px solid #000000' : '1px solid #e2e8f0',
                       }}
                     >
                       {tag}
@@ -323,14 +303,14 @@ export default function DishEditorModal({
                   );
                 })}
               </div>
-              <div style={{ display: 'flex', gap: '8px' }}>
+              <div style={{ display: 'flex', gap: '6px' }}>
                 <input
                   type="text"
                   value={newTagInput}
                   onChange={(e) => setNewTagInput(e.target.value)}
-                  placeholder="Añadir otra etiqueta..."
+                  placeholder="Otra etiqueta..."
                   className="input-field"
-                  style={{ height: '36px', fontSize: '13px' }}
+                  style={{ height: '34px', fontSize: '12px' }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       e.preventDefault();
@@ -342,36 +322,36 @@ export default function DishEditorModal({
                   type="button"
                   onClick={handleAddCustomTag}
                   className="btn btn-secondary"
-                  style={{ height: '36px', padding: '0 12px', fontSize: '12px' }}
+                  style={{ height: '34px', padding: '0 12px', fontSize: '12px' }}
                 >
-                  Añadir
+                  +
                 </button>
               </div>
             </div>
 
-            {/* Ingredients Section - HIGHLIGHTED FEATURE */}
+            {/* Ingredients Section */}
             <div style={{
-              background: 'rgba(16, 185, 129, 0.04)',
-              border: '1px solid rgba(16, 185, 129, 0.15)',
-              borderRadius: 'var(--radius-md)',
-              padding: '16px',
-              marginBottom: '18px'
+              background: '#f8fafc',
+              border: '1px solid #e2e8f0',
+              borderRadius: '8px',
+              padding: '14px',
+              marginBottom: '16px'
             }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                 <div>
-                  <h4 style={{ fontSize: '15px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Store size={18} color="var(--accent-green)" />
-                    Alimentos e Ingredientes necesarios ({ingredients.length})
+                  <h4 style={{ fontSize: '14px', fontWeight: '800', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <Store size={15} />
+                    Alimentos e Ingredientes ({ingredients.length})
                   </h4>
-                  <p style={{ fontSize: '11px', color: 'var(--text-dim)' }}>
-                    Al guardar, estos alimentos formarán tu lista de la compra automática
+                  <p style={{ fontSize: '11px', color: '#64748b' }}>
+                    Se usarán para generar la lista de la compra automáticamente
                   </p>
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                  <span style={{ fontSize: '10px', color: 'var(--text-dim)', display: 'block', textTransform: 'uppercase' }}>
-                    Coste estimado
+                  <span style={{ fontSize: '10px', color: '#64748b', display: 'block', textTransform: 'uppercase' }}>
+                    Total plato
                   </span>
-                  <span className="price-text" style={{ fontSize: '16px', fontWeight: '800', color: 'var(--accent-green-light)' }}>
+                  <span className="price-text" style={{ fontSize: '15px', fontWeight: '800', color: '#000000' }}>
                     {totalCost.toFixed(2)} €
                   </span>
                 </div>
@@ -382,27 +362,27 @@ export default function DishEditorModal({
                 type="button"
                 onClick={() => setIsMercadonaModalOpen(true)}
                 className="btn btn-primary"
-                style={{ width: '100%', marginBottom: '12px', padding: '10px 14px' }}
+                style={{ width: '100%', marginBottom: '10px', padding: '9px 12px' }}
               >
-                <Plus size={18} />
-                <span>Buscar y añadir producto de Mercadona</span>
+                <Plus size={16} />
+                <span>Buscar en catálogo de Mercadona</span>
               </button>
 
               {/* Ingredients list */}
               {ingredients.length === 0 ? (
                 <div style={{
-                  padding: '16px',
+                  padding: '14px',
                   textAlign: 'center',
-                  background: 'var(--bg-secondary)',
-                  borderRadius: 'var(--radius-sm)',
-                  border: '1px dashed var(--border-subtle)',
-                  color: 'var(--text-dim)',
-                  fontSize: '13px'
+                  background: '#ffffff',
+                  borderRadius: '6px',
+                  border: '1px dashed #cbd5e1',
+                  color: '#64748b',
+                  fontSize: '12px'
                 }}>
-                  No has añadido ingredientes todavía. Usa el botón superior para buscar en Mercadona o añade uno manual abajo.
+                  No has añadido alimentos todavía. Pulsa el botón de arriba para buscar en Mercadona.
                 </div>
               ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   {ingredients.map((ing) => (
                     <div
                       key={ing.id}
@@ -410,22 +390,22 @@ export default function DishEditorModal({
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        gap: '10px',
-                        background: 'var(--bg-card)',
-                        padding: '8px 12px',
-                        borderRadius: 'var(--radius-sm)',
-                        border: '1px solid var(--border-subtle)'
+                        gap: '8px',
+                        background: '#ffffff',
+                        padding: '8px 10px',
+                        borderRadius: '6px',
+                        border: '1px solid #e2e8f0'
                       }}
                     >
-                      {/* Product image if from Mercadona */}
                       {ing.mercadonaProduct?.thumbnail && (
                         <div style={{
-                          width: '36px',
-                          height: '36px',
-                          borderRadius: '6px',
+                          width: '32px',
+                          height: '32px',
+                          borderRadius: '4px',
                           overflow: 'hidden',
                           background: '#ffffff',
-                          flexShrink: 0
+                          flexShrink: 0,
+                          border: '1px solid #e2e8f0'
                         }}>
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
@@ -437,61 +417,59 @@ export default function DishEditorModal({
                       )}
 
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <div style={{ fontSize: '12px', fontWeight: '700', color: '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {ing.name}
                         </div>
-                        <div style={{ fontSize: '11px', color: 'var(--text-dim)', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <div style={{ fontSize: '11px', color: '#64748b' }}>
                           {ing.mercadonaProduct ? (
-                            <span style={{ color: 'var(--accent-green)', fontWeight: '600' }}>
-                              Mercadona • {ing.mercadonaProduct.price.toFixed(2)} €/ud
-                            </span>
+                            <span>Mercadona • {ing.mercadonaProduct.price.toFixed(2)} €</span>
                           ) : (
                             <span>{ing.estimatedPrice > 0 ? `${ing.estimatedPrice.toFixed(2)} €` : 'Sin precio'}</span>
                           )}
-                          <span>• {ing.unit}</span>
+                          <span> • {ing.unit}</span>
                         </div>
                       </div>
 
                       {/* Quantity Stepper */}
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                         <button
                           type="button"
                           onClick={() => handleUpdateIngredientQty(ing.id, -1)}
                           style={{
-                            width: '26px',
-                            height: '26px',
-                            borderRadius: '6px',
-                            background: 'var(--bg-secondary)',
-                            border: '1px solid var(--border-subtle)',
-                            color: 'var(--text-main)',
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '4px',
+                            background: '#f1f5f9',
+                            border: '1px solid #cbd5e1',
+                            color: '#0f172a',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            fontSize: '14px',
+                            fontSize: '13px',
                             fontWeight: '700'
                           }}
                         >
                           -
                         </button>
-                        <span style={{ fontSize: '13px', fontWeight: '700', minWidth: '18px', textAlign: 'center' }}>
+                        <span style={{ fontSize: '12px', fontWeight: '700', minWidth: '16px', textAlign: 'center' }}>
                           {ing.quantity || 1}
                         </span>
                         <button
                           type="button"
                           onClick={() => handleUpdateIngredientQty(ing.id, 1)}
                           style={{
-                            width: '26px',
-                            height: '26px',
-                            borderRadius: '6px',
-                            background: 'var(--bg-secondary)',
-                            border: '1px solid var(--border-subtle)',
-                            color: 'var(--text-main)',
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '4px',
+                            background: '#f1f5f9',
+                            border: '1px solid #cbd5e1',
+                            color: '#0f172a',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            fontSize: '14px',
+                            fontSize: '13px',
                             fontWeight: '700'
                           }}
                         >
@@ -502,20 +480,19 @@ export default function DishEditorModal({
                           type="button"
                           onClick={() => handleRemoveIngredient(ing.id)}
                           style={{
-                            width: '28px',
-                            height: '28px',
-                            borderRadius: '6px',
+                            width: '26px',
+                            height: '26px',
+                            borderRadius: '4px',
                             background: 'transparent',
                             border: 'none',
-                            color: 'var(--accent-rose)',
+                            color: '#dc2626',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            marginLeft: '4px'
                           }}
                         >
-                          <Trash2 size={15} />
+                          <Trash2 size={13} />
                         </button>
                       </div>
                     </div>
@@ -523,9 +500,9 @@ export default function DishEditorModal({
                 </div>
               )}
 
-              {/* Optional manual ingredient adder */}
-              <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--border-subtle)' }}>
-                <span style={{ fontSize: '11px', color: 'var(--text-dim)', fontWeight: '600', display: 'block', marginBottom: '6px' }}>
+              {/* Manual ingredient adder */}
+              <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px solid #e2e8f0' }}>
+                <span style={{ fontSize: '10px', color: '#64748b', fontWeight: '700', display: 'block', marginBottom: '4px' }}>
                   O añadir ingrediente genérico a mano:
                 </span>
                 <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr auto', gap: '6px' }}>
@@ -535,7 +512,7 @@ export default function DishEditorModal({
                     onChange={(e) => setManualIngName(e.target.value)}
                     placeholder="Ej: Sal, Agua, Ajo..."
                     className="input-field"
-                    style={{ height: '34px', fontSize: '12px' }}
+                    style={{ height: '32px', fontSize: '12px' }}
                   />
                   <input
                     type="number"
@@ -544,21 +521,21 @@ export default function DishEditorModal({
                     onChange={(e) => setManualIngQty(parseInt(e.target.value) || 1)}
                     placeholder="Cant."
                     className="input-field"
-                    style={{ height: '34px', fontSize: '12px' }}
+                    style={{ height: '32px', fontSize: '12px' }}
                   />
                   <input
                     type="text"
                     value={manualIngUnit}
                     onChange={(e) => setManualIngUnit(e.target.value)}
-                    placeholder="Unidad (ud, g...)"
+                    placeholder="ud"
                     className="input-field"
-                    style={{ height: '34px', fontSize: '12px' }}
+                    style={{ height: '32px', fontSize: '12px' }}
                   />
                   <button
                     type="button"
                     onClick={handleAddManualIngredient}
                     className="btn btn-secondary"
-                    style={{ height: '34px', padding: '0 10px', fontSize: '12px' }}
+                    style={{ height: '32px', padding: '0 8px', fontSize: '12px' }}
                   >
                     +
                   </button>
@@ -566,35 +543,35 @@ export default function DishEditorModal({
               </div>
             </div>
 
-            {/* Optional Notes or Recipe Steps */}
+            {/* Notes */}
             <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: '6px' }}>
-                Notas de preparación o receta (opcional)
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', color: '#64748b', marginBottom: '4px' }}>
+                Notas de preparación (opcional)
               </label>
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="Tiempo de cocción, trucos o enlace a la receta..."
-                rows={3}
+                placeholder="Instrucciones o notas..."
+                rows={2}
                 className="input-field"
-                style={{ resize: 'vertical', fontSize: '13px' }}
+                style={{ resize: 'vertical', fontSize: '12px' }}
               />
             </div>
 
-            {/* Submit Buttons */}
-            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+            {/* Actions */}
+            <div style={{ display: 'flex', gap: '8px' }}>
               <button
                 type="button"
                 onClick={onClose}
                 className="btn btn-secondary"
-                style={{ flex: 1, padding: '12px' }}
+                style={{ flex: 1, padding: '10px' }}
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 className="btn btn-primary"
-                style={{ flex: 2, padding: '12px', fontSize: '15px' }}
+                style={{ flex: 2, padding: '10px' }}
               >
                 {dishToEdit ? 'Guardar Cambios' : 'Guardar en Banco de Platos'}
               </button>
@@ -603,12 +580,11 @@ export default function DishEditorModal({
         </div>
       </div>
 
-      {/* Mercadona live search modal */}
       <MercadonaSearchModal
         isOpen={isMercadonaModalOpen}
         onClose={() => setIsMercadonaModalOpen(false)}
         onSelectProduct={handleAddMercadonaProduct}
-        title="Añadir ingrediente de Mercadona"
+        title="Añadir alimento de Mercadona"
       />
     </>
   );

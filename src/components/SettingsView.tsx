@@ -12,20 +12,16 @@ import {
   CheckCircle2,
   AlertCircle,
   Copy,
-  ExternalLink,
-  ShieldCheck,
-  QrCode,
+  Trash2,
   Check
 } from 'lucide-react';
 
 const POPULAR_POSTAL_CODES = [
-  { city: 'Valencia', code: '46001' },
+  { city: 'Logroño (Por defecto)', code: '26001' },
+  { city: 'Zaragoza', code: '50001' },
+  { city: 'Pamplona', code: '31001' },
   { city: 'Madrid', code: '28001' },
   { city: 'Barcelona', code: '08001' },
-  { city: 'Sevilla', code: '41001' },
-  { city: 'Málaga', code: '29001' },
-  { city: 'Alicante', code: '03001' },
-  { city: 'Zaragoza', code: '50001' },
   { city: 'Bilbao', code: '48001' },
 ];
 
@@ -33,6 +29,7 @@ export default function SettingsView() {
   const {
     settings,
     updateSettings,
+    resetAllData,
     syncStatus,
     syncErrorMsg,
     lastSyncTime,
@@ -45,7 +42,7 @@ export default function SettingsView() {
   const [copiedSyncCode, setCopiedSyncCode] = useState(false);
   const [copiedShareUrl, setCopiedShareUrl] = useState(false);
   const [connectSuccess, setConnectSuccess] = useState(false);
-  const [showQr, setShowQr] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const handleSavePostalCode = (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,72 +83,77 @@ export default function SettingsView() {
     }
   };
 
+  const handleConfirmReset = () => {
+    resetAllData();
+    setShowResetConfirm(false);
+  };
+
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', padding: '16px 16px 40px 16px' }}>
       {/* Title */}
-      <div style={{ marginBottom: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-          <span className="badge badge-green" style={{ fontSize: '11px' }}>
-            <Settings size={12} /> Configuración
+      <div style={{ marginBottom: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+          <span style={{ fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#64748b' }}>
+            Preferencias
           </span>
         </div>
-        <h2 style={{ fontSize: '24px', fontWeight: '800' }}>
+        <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0f172a', letterSpacing: '-0.02em' }}>
           Ajustes & Sincronización
         </h2>
-        <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-          Gestiona los precios de tu tienda local y conecta tu iPhone y PC al instante sin contraseñas.
+        <p style={{ fontSize: '13px', color: '#64748b' }}>
+          Configuración de Mercadona Logroño y sincronización instantánea entre tu móvil y PC.
         </p>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {/* 1. SECCIÓN MERCADONA */}
-        <div className="glass-card" style={{ padding: '20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+        <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '18px', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
             <div style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '10px',
-              background: 'var(--accent-green-subtle)',
-              color: 'var(--accent-green)',
+              width: '32px',
+              height: '32px',
+              borderRadius: '6px',
+              background: '#000000',
+              color: '#ffffff',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
             }}>
-              <Store size={20} />
+              <Store size={18} />
             </div>
             <div>
-              <h3 style={{ fontSize: '16px', fontWeight: '700' }}>Tienda Mercadona y Precios</h3>
-              <p style={{ fontSize: '12px', color: 'var(--text-dim)' }}>
-                Configura tu código postal para consultar el stock y precios de tu supermercado local
+              <h3 style={{ fontSize: '15px', fontWeight: '800', color: '#0f172a' }}>Tienda Mercadona Logroño</h3>
+              <p style={{ fontSize: '12px', color: '#64748b' }}>
+                Código postal asignado para el catálogo y precios
               </p>
             </div>
           </div>
 
-          <form onSubmit={handleSavePostalCode} style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
+          <form onSubmit={handleSavePostalCode} style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
             <input
               type="text"
               maxLength={5}
               value={inputPostalCode}
               onChange={(e) => setInputPostalCode(e.target.value)}
-              placeholder="Ej: 46001, 28001..."
+              placeholder="26001"
               className="input-field"
-              style={{ width: '160px', fontWeight: '700', fontSize: '15px' }}
+              style={{ width: '140px', fontWeight: '700', fontSize: '14px' }}
             />
-            <button type="submit" className="btn btn-primary" style={{ fontSize: '13px', padding: '0 18px' }}>
+            <button type="submit" className="btn btn-primary" style={{ fontSize: '12px', padding: '0 16px' }}>
               Guardar CP
             </button>
             <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '12px', color: 'var(--text-dim)' }}>Almacén asignado:</span>
-              <span className="badge badge-green" style={{ fontSize: '11px' }}>
-                {settings.warehouse || 'Automático'}
+              <span style={{ fontSize: '11px', color: '#64748b' }}>Almacén:</span>
+              <span style={{ fontSize: '11px', fontWeight: '700', background: '#f1f5f9', padding: '2px 8px', borderRadius: '4px', border: '1px solid #e2e8f0' }}>
+                {settings.warehouse || 'zgz1'}
               </span>
             </div>
           </form>
 
           {/* Quick city selectors */}
           <div>
-            <span style={{ fontSize: '11px', color: 'var(--text-dim)', fontWeight: '600', display: 'block', marginBottom: '6px' }}>
-              Ciudades frecuentes:
+            <span style={{ fontSize: '11px', color: '#64748b', fontWeight: '600', display: 'block', marginBottom: '6px' }}>
+              Ubicaciones:
             </span>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
               {POPULAR_POSTAL_CODES.map((c) => (
@@ -161,100 +163,99 @@ export default function SettingsView() {
                   onClick={() => handleSelectPopularCode(c.code)}
                   style={{
                     padding: '4px 10px',
-                    borderRadius: 'var(--radius-full)',
+                    borderRadius: '20px',
                     fontSize: '11px',
                     cursor: 'pointer',
-                    background: settings.postalCode === c.code ? 'var(--accent-green)' : 'var(--bg-secondary)',
-                    color: settings.postalCode === c.code ? '#070a12' : 'var(--text-muted)',
-                    border: '1px solid var(--border-subtle)',
+                    background: settings.postalCode === c.code ? '#000000' : '#f8fafc',
+                    color: settings.postalCode === c.code ? '#ffffff' : '#475569',
+                    border: settings.postalCode === c.code ? '1px solid #000000' : '1px solid #e2e8f0',
                     fontWeight: settings.postalCode === c.code ? '700' : '500'
                   }}
                 >
-                  {c.city} ({c.code})
+                  {c.city}
                 </button>
               ))}
             </div>
           </div>
         </div>
 
-        {/* 2. SECCIÓN SINCRONIZACIÓN EN LA NUBE SIN LOGIN */}
-        <div className="glass-card" style={{ padding: '20px', border: '1px solid rgba(16, 185, 129, 0.25)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+        {/* 2. SECCIÓN SINCRONIZACIÓN EN LA NUBE */}
+        <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '18px', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
             <div style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '10px',
-              background: 'var(--accent-green-subtle)',
-              color: 'var(--accent-green)',
+              width: '32px',
+              height: '32px',
+              borderRadius: '6px',
+              background: '#000000',
+              color: '#ffffff',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
             }}>
-              <RefreshCw size={20} />
+              <RefreshCw size={17} />
             </div>
             <div>
-              <h3 style={{ fontSize: '16px', fontWeight: '700' }}>Sincronización en la Nube (Sin Login)</h3>
-              <p style={{ fontSize: '12px', color: 'var(--text-dim)' }}>
-                Comparte tus menús y lista entre el PC y el iPhone en tiempo real
+              <h3 style={{ fontSize: '15px', fontWeight: '800', color: '#0f172a' }}>Sincronización Móvil y PC</h3>
+              <p style={{ fontSize: '12px', color: '#64748b' }}>
+                Conecta tus dispositivos para compartir el menú y la lista en tiempo real
               </p>
             </div>
           </div>
 
-          {/* Current Code Box */}
           <div style={{
-            background: 'var(--bg-secondary)',
-            borderRadius: 'var(--radius-sm)',
-            padding: '16px',
-            marginBottom: '16px',
+            background: '#f8fafc',
+            border: '1px solid #e2e8f0',
+            borderRadius: '8px',
+            padding: '14px',
+            marginBottom: '14px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             flexWrap: 'wrap',
-            gap: '12px',
-            border: '1px solid var(--border-subtle)'
+            gap: '10px'
           }}>
             <div>
-              <span style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: '700' }}>
+              <span style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', fontWeight: '700' }}>
                 Tu Código de Hogar
               </span>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px' }}>
-                <span className="price-text" style={{ fontSize: '22px', fontWeight: '800', color: 'var(--accent-green-light)', letterSpacing: '0.05em' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
+                <span className="price-text" style={{ fontSize: '20px', fontWeight: '900', color: '#000000' }}>
                   {settings.syncCode}
                 </span>
                 <button
                   onClick={handleCopyCode}
                   className="btn btn-ghost btn-icon"
-                  style={{ width: '30px', height: '30px' }}
+                  style={{ width: '28px', height: '28px' }}
                   title="Copiar código"
                 >
-                  {copiedSyncCode ? <Check size={16} color="var(--accent-green)" /> : <Copy size={16} />}
+                  {copiedSyncCode ? <Check size={14} color="#000000" /> : <Copy size={14} />}
                 </button>
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '8px' }}>
+            <div style={{ display: 'flex', gap: '6px' }}>
               <button
                 onClick={() => syncToCloud()}
                 className="btn btn-primary"
-                style={{ fontSize: '13px', padding: '8px 16px' }}
+                style={{ fontSize: '12px', padding: '7px 14px' }}
               >
-                <RefreshCw size={14} className={syncStatus === 'syncing' ? 'spin-anim' : ''} />
+                <RefreshCw size={13} className={syncStatus === 'syncing' ? 'spin-anim' : ''} />
                 <span>{syncStatus === 'syncing' ? 'Subiendo...' : 'Subir a la nube'}</span>
               </button>
               <button
                 onClick={handleCopyShareLink}
                 className="btn btn-secondary"
-                style={{ fontSize: '13px', padding: '8px 14px' }}
-                title="Copiar enlace de sincronización automática"
+                style={{ fontSize: '12px', padding: '7px 12px' }}
+                title="Copiar enlace"
               >
                 {copiedShareUrl ? (
                   <>
-                    <Check size={14} color="var(--accent-green)" />
-                    <span style={{ color: 'var(--accent-green)' }}>Enlace copiado</span>
+                    <Check size={13} color="#000000" />
+                    <span>Copiado</span>
                   </>
                 ) : (
                   <>
-                    <Share2 size={14} />
+                    <Share2 size={13} />
                     <span>Compartir link</span>
                   </>
                 )}
@@ -264,209 +265,124 @@ export default function SettingsView() {
 
           {/* Sync Status Feedback */}
           {syncStatus === 'synced' && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent-green)', fontSize: '12px', marginBottom: '12px' }}>
-              <CheckCircle2 size={16} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#000000', fontSize: '12px', marginBottom: '10px' }}>
+              <CheckCircle2 size={15} color="#000000" />
               <span>Sincronizado correctamente con la nube ({lastSyncTime?.toLocaleTimeString() || 'Reciente'})</span>
             </div>
           )}
 
-          {syncStatus === 'error' && syncErrorMsg && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent-rose)', fontSize: '12px', marginBottom: '12px' }}>
-              <AlertCircle size={16} />
-              <span>{syncErrorMsg}</span>
-            </div>
-          )}
-
           {/* Link another device */}
-          <div style={{ paddingTop: '14px', borderTop: '1px solid var(--border-subtle)' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: '6px' }}>
-              ¿Quieres unirte a un código existente de tu otro dispositivo?
+          <div style={{ paddingTop: '12px', borderTop: '1px solid #e2e8f0' }}>
+            <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', color: '#64748b', marginBottom: '6px' }}>
+              Cargar datos desde otro dispositivo con su código:
             </label>
-            <form onSubmit={handleConnectRemoteCode} style={{ display: 'flex', gap: '8px' }}>
+            <form onSubmit={handleConnectRemoteCode} style={{ display: 'flex', gap: '6px' }}>
               <input
                 type="text"
                 value={connectCodeInput}
                 onChange={(e) => setConnectCodeInput(e.target.value.toUpperCase())}
-                placeholder="Introduce el código (ej: CASA-7782)"
+                placeholder="Ej: LOGRO-101"
                 className="input-field"
-                style={{ maxWidth: '300px', fontSize: '13px' }}
+                style={{ maxWidth: '240px', fontSize: '13px' }}
               />
-              <button type="submit" className="btn btn-secondary" style={{ fontSize: '13px', padding: '0 16px' }}>
-                Conectar y cargar
+              <button type="submit" className="btn btn-secondary" style={{ fontSize: '12px', padding: '0 14px' }}>
+                Conectar
               </button>
             </form>
             {connectSuccess && (
-              <span style={{ fontSize: '12px', color: 'var(--accent-green)', display: 'block', marginTop: '6px' }}>
-                ✓ Datos cargados y vinculados correctamente.
+              <span style={{ fontSize: '12px', color: '#000000', display: 'block', marginTop: '4px', fontWeight: '600' }}>
+                ✓ Datos vinculados correctamente.
               </span>
             )}
           </div>
         </div>
 
         {/* 3. SECCIÓN INSTALACIÓN PWA IPHONE */}
-        <div className="glass-card" style={{ padding: '20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+        <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '18px', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
             <div style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '10px',
-              background: 'rgba(59, 130, 246, 0.15)',
-              color: 'var(--accent-blue)',
+              width: '32px',
+              height: '32px',
+              borderRadius: '6px',
+              background: '#000000',
+              color: '#ffffff',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
             }}>
-              <Smartphone size={20} />
+              <Smartphone size={17} />
             </div>
             <div>
-              <h3 style={{ fontSize: '16px', fontWeight: '700' }}>Instalación PWA en iPhone</h3>
-              <p style={{ fontSize: '12px', color: 'var(--text-dim)' }}>
-                Convierte esta web en una app nativa en tu pantalla de inicio
+              <h3 style={{ fontSize: '15px', fontWeight: '800', color: '#0f172a' }}>Instalar en iPhone como App (PWA)</h3>
+              <p style={{ fontSize: '12px', color: '#64748b' }}>
+                Pasos sencillos para guardarla en la pantalla de inicio
               </p>
             </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '13px', color: 'var(--text-muted)' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px', color: '#475569' }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-              <div style={{
-                width: '24px',
-                height: '24px',
-                borderRadius: 'var(--radius-full)',
-                background: 'var(--bg-tertiary)',
-                color: 'var(--text-main)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '12px',
-                fontWeight: '700',
-                flexShrink: 0
-              }}>
+              <span style={{ width: '22px', height: '22px', borderRadius: '4px', background: '#f1f5f9', color: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: '800', flexShrink: 0 }}>
                 1
-              </div>
-              <div>
-                <strong>Abre la web en Safari:</strong> Abre este enlace desde el navegador Safari de tu iPhone.
-              </div>
+              </span>
+              <span>Abre el enlace en el navegador <strong>Safari</strong> de tu iPhone.</span>
             </div>
-
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-              <div style={{
-                width: '24px',
-                height: '24px',
-                borderRadius: 'var(--radius-full)',
-                background: 'var(--bg-tertiary)',
-                color: 'var(--text-main)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '12px',
-                fontWeight: '700',
-                flexShrink: 0
-              }}>
+              <span style={{ width: '22px', height: '22px', borderRadius: '4px', background: '#f1f5f9', color: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: '800', flexShrink: 0 }}>
                 2
-              </div>
-              <div>
-                <strong>Pulsa en Compartir:</strong> Toca el icono de compartir en la barra inferior de Safari (el cuadrado con flecha hacia arriba <Share2 size={13} style={{ display: 'inline' }} />).
-              </div>
+              </span>
+              <span>Toca el botón <strong>Compartir</strong> (icono del cuadrado con flecha hacia arriba <Share2 size={12} style={{ display: 'inline' }} />).</span>
             </div>
-
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-              <div style={{
-                width: '24px',
-                height: '24px',
-                borderRadius: 'var(--radius-full)',
-                background: 'var(--bg-tertiary)',
-                color: 'var(--text-main)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '12px',
-                fontWeight: '700',
-                flexShrink: 0
-              }}>
+              <span style={{ width: '22px', height: '22px', borderRadius: '4px', background: '#f1f5f9', color: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: '800', flexShrink: 0 }}>
                 3
-              </div>
-              <div>
-                <strong>&quot;Añadir a la pantalla de inicio&quot;:</strong> Desliza hacia abajo en el menú y selecciona <em>Añadir a pantalla de inicio</em>.
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-              <div style={{
-                width: '24px',
-                height: '24px',
-                borderRadius: 'var(--radius-full)',
-                background: 'var(--accent-green-subtle)',
-                color: 'var(--accent-green)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '12px',
-                fontWeight: '700',
-                flexShrink: 0
-              }}>
-                ✓
-              </div>
-              <div>
-                <strong>¡App lista!:</strong> Se creará el icono de alta resolución con el logo de Mercadona en tu iPhone. Se abrirá a pantalla completa sin barras de navegador.
-              </div>
+              </span>
+              <span>Selecciona <strong>&quot;Añadir a la pantalla de inicio&quot;</strong>.</span>
             </div>
           </div>
         </div>
 
-        {/* 4. SECCIÓN BASE DE DATOS SUPABASE (OPCIONAL) */}
-        <div className="glass-card" style={{ padding: '20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
-            <div style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '10px',
-              background: 'rgba(245, 158, 11, 0.15)',
-              color: 'var(--accent-gold)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <Database size={20} />
-            </div>
+        {/* 4. SECCIÓN RESTABLECER DATOS */}
+        <div style={{ background: '#ffffff', border: '1px solid #fee2e2', borderRadius: '10px', padding: '18px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
             <div>
-              <h3 style={{ fontSize: '16px', fontWeight: '700' }}>Base de Datos Personal (Supabase / Postgres)</h3>
-              <p style={{ fontSize: '12px', color: 'var(--text-dim)' }}>
-                Opcional: Si tienes tu propia base de datos Supabase, puedes configurarla aquí
+              <h4 style={{ fontSize: '14px', fontWeight: '800', color: '#b91c1c' }}>
+                Restablecer y vaciar todos los datos
+              </h4>
+              <p style={{ fontSize: '12px', color: '#64748b' }}>
+                Borra todos los platos, el menú semanal y la lista para empezar desde cero
               </p>
             </div>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <div>
-              <label style={{ display: 'block', fontSize: '11px', color: 'var(--text-dim)', fontWeight: '600', marginBottom: '4px' }}>
-                Supabase Project URL
-              </label>
-              <input
-                type="text"
-                value={settings.supabaseUrl || ''}
-                onChange={(e) => updateSettings({ supabaseUrl: e.target.value })}
-                placeholder="https://xyzcompany.supabase.co"
-                className="input-field"
-                style={{ fontSize: '13px' }}
-              />
-            </div>
-            <div>
-              <label style={{ display: 'block', fontSize: '11px', color: 'var(--text-dim)', fontWeight: '600', marginBottom: '4px' }}>
-                Supabase Anon Key
-              </label>
-              <input
-                type="password"
-                value={settings.supabaseAnonKey || ''}
-                onChange={(e) => updateSettings({ supabaseAnonKey: e.target.value })}
-                placeholder="eyJhbGciOiJIUzI1NiIsInR5c..."
-                className="input-field"
-                style={{ fontSize: '13px' }}
-              />
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--text-dim)', marginTop: '4px' }}>
-              <ShieldCheck size={16} color="var(--accent-green)" />
-              <span>Por defecto, la app ya incluye sincronización cloud automática con tu código de hogar sin necesidad de Supabase.</span>
-            </div>
+            {!showResetConfirm ? (
+              <button
+                type="button"
+                onClick={() => setShowResetConfirm(true)}
+                className="btn btn-danger"
+                style={{ fontSize: '12px', padding: '7px 14px' }}
+              >
+                <Trash2 size={14} />
+                <span>Vaciar todo</span>
+              </button>
+            ) : (
+              <div style={{ display: 'flex', gap: '6px' }}>
+                <button
+                  type="button"
+                  onClick={handleConfirmReset}
+                  className="btn btn-danger"
+                  style={{ fontSize: '12px', padding: '7px 12px', background: '#dc2626', color: '#fff' }}
+                >
+                  Confirmar borrado
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowResetConfirm(false)}
+                  className="btn btn-secondary"
+                  style={{ fontSize: '12px', padding: '7px 10px' }}
+                >
+                  Cancelar
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

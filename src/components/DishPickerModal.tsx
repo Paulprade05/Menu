@@ -11,8 +11,7 @@ import {
   Pizza,
   Package,
   Sparkles,
-  Check,
-  Tag
+  Check
 } from 'lucide-react';
 
 interface DishPickerModalProps {
@@ -43,13 +42,11 @@ export default function DishPickerModal({
   if (!isOpen) return null;
 
   const filteredDishes = dishes.filter(dish => {
-    // Type filter
     if (filterType !== 'todos') {
       if (dish.type !== 'ambas' && dish.type !== filterType) {
         return false;
       }
     }
-    // Search query
     if (search.trim()) {
       const q = search.toLowerCase();
       const matchName = dish.name.toLowerCase().includes(q);
@@ -68,7 +65,7 @@ export default function DishPickerModal({
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxHeight: '88vh' }}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxHeight: '90vh' }}>
         <div className="sheet-handle" />
 
         {/* Header */}
@@ -78,60 +75,45 @@ export default function DishPickerModal({
               fontSize: '11px',
               fontWeight: '700',
               textTransform: 'uppercase',
-              color: slotType === 'comida' ? 'var(--accent-gold)' : 'var(--accent-purple)',
-              letterSpacing: '0.05em'
+              color: '#64748b',
+              letterSpacing: '0.04em'
             }}>
-              {slotType === 'comida' ? '☀️ Almuerzo / Comida' : '🌙 Cena'}
+              {slotType === 'comida' ? '☀️ Comida' : '🌙 Cena'}
             </span>
-            <h3 style={{ fontSize: '17px', fontWeight: '800' }}>
-              Elegir plato para el {dayLabel}
+            <h3 style={{ fontSize: '16px', fontWeight: '800', color: '#0f172a' }}>
+              Elegir para el {dayLabel}
             </h3>
           </div>
           <button onClick={onClose} className="btn btn-ghost btn-icon">
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
         {/* Search & Filters */}
-        <div style={{ padding: '14px 20px 8px 20px' }}>
+        <div style={{ padding: '12px 18px 6px 18px' }}>
           <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-            <Search size={18} color="var(--text-dim)" style={{ position: 'absolute', left: '12px' }} />
+            <Search size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px' }} />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar en tu banco de platos..."
               className="input-field"
-              style={{ paddingLeft: '38px', height: '42px' }}
+              style={{ paddingLeft: '36px', height: '40px' }}
             />
-            {search && (
-              <button
-                onClick={() => setSearch('')}
-                style={{
-                  position: 'absolute',
-                  right: '12px',
-                  background: 'transparent',
-                  border: 'none',
-                  color: 'var(--text-dim)',
-                  cursor: 'pointer'
-                }}
-              >
-                <X size={16} />
-              </button>
-            )}
           </div>
 
           <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
             <button
               onClick={() => setFilterType('todos')}
               style={{
-                background: filterType === 'todos' ? 'var(--accent-green-subtle)' : 'var(--bg-tertiary)',
-                color: filterType === 'todos' ? 'var(--accent-green-light)' : 'var(--text-dim)',
-                border: filterType === 'todos' ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid var(--border-subtle)',
-                borderRadius: 'var(--radius-full)',
+                background: filterType === 'todos' ? '#000000' : '#ffffff',
+                color: filterType === 'todos' ? '#ffffff' : '#64748b',
+                border: filterType === 'todos' ? '1px solid #000000' : '1px solid #cbd5e1',
+                borderRadius: '20px',
                 padding: '4px 12px',
-                fontSize: '12px',
-                fontWeight: '600',
+                fontSize: '11px',
+                fontWeight: '700',
                 cursor: 'pointer'
               }}
             >
@@ -140,13 +122,13 @@ export default function DishPickerModal({
             <button
               onClick={() => setFilterType('comida')}
               style={{
-                background: filterType === 'comida' ? 'var(--accent-gold-subtle)' : 'var(--bg-tertiary)',
-                color: filterType === 'comida' ? 'var(--accent-gold)' : 'var(--text-dim)',
-                border: filterType === 'comida' ? '1px solid rgba(245, 158, 11, 0.4)' : '1px solid var(--border-subtle)',
-                borderRadius: 'var(--radius-full)',
+                background: filterType === 'comida' ? '#000000' : '#ffffff',
+                color: filterType === 'comida' ? '#ffffff' : '#64748b',
+                border: filterType === 'comida' ? '1px solid #000000' : '1px solid #cbd5e1',
+                borderRadius: '20px',
                 padding: '4px 12px',
-                fontSize: '12px',
-                fontWeight: '600',
+                fontSize: '11px',
+                fontWeight: '700',
                 cursor: 'pointer'
               }}
             >
@@ -155,13 +137,13 @@ export default function DishPickerModal({
             <button
               onClick={() => setFilterType('cena')}
               style={{
-                background: filterType === 'cena' ? 'rgba(139, 92, 246, 0.15)' : 'var(--bg-tertiary)',
-                color: filterType === 'cena' ? '#a78bfa' : 'var(--text-dim)',
-                border: filterType === 'cena' ? '1px solid rgba(139, 92, 246, 0.4)' : '1px solid var(--border-subtle)',
-                borderRadius: 'var(--radius-full)',
+                background: filterType === 'cena' ? '#000000' : '#ffffff',
+                color: filterType === 'cena' ? '#ffffff' : '#64748b',
+                border: filterType === 'cena' ? '1px solid #000000' : '1px solid #cbd5e1',
+                borderRadius: '20px',
                 padding: '4px 12px',
-                fontSize: '12px',
-                fontWeight: '600',
+                fontSize: '11px',
+                fontWeight: '700',
                 cursor: 'pointer'
               }}
             >
@@ -171,13 +153,13 @@ export default function DishPickerModal({
         </div>
 
         {/* Content list */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '8px 20px 20px 20px' }}>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '8px 18px 20px 18px' }}>
           {/* Quick Options */}
           <div style={{ marginBottom: '14px' }}>
-            <span style={{ fontSize: '11px', color: 'var(--text-dim)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              Opciones especiales
+            <span style={{ fontSize: '11px', color: '#64748b', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              Opciones rápidas
             </span>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '8px', marginTop: '6px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '6px', marginTop: '6px' }}>
               {quickCustomOptions.map(opt => (
                 <button
                   key={opt.label}
@@ -189,12 +171,13 @@ export default function DishPickerModal({
                   style={{
                     justifyContent: 'flex-start',
                     fontSize: '12px',
-                    padding: '8px 12px',
-                    background: currentCustomName === opt.label ? 'var(--accent-green-subtle)' : 'var(--bg-tertiary)',
-                    borderColor: currentCustomName === opt.label ? 'var(--accent-green)' : 'var(--border-subtle)',
+                    padding: '8px 10px',
+                    background: currentCustomName === opt.label ? '#000000' : '#ffffff',
+                    color: currentCustomName === opt.label ? '#ffffff' : '#0f172a',
+                    borderColor: currentCustomName === opt.label ? '#000000' : '#cbd5e1',
                   }}
                 >
-                  <opt.icon size={16} />
+                  <opt.icon size={15} />
                   <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {opt.label}
                   </span>
@@ -210,17 +193,20 @@ export default function DishPickerModal({
               onCreateNewDish();
             }}
             className="btn btn-primary"
-            style={{ width: '100%', marginBottom: '16px', padding: '12px' }}
+            style={{ width: '100%', marginBottom: '14px', padding: '10px' }}
           >
-            <Plus size={18} />
-            <span>Crear nuevo plato para el banco</span>
+            <Plus size={16} />
+            <span>Crear nuevo plato</span>
           </button>
 
           {/* Dishes list */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             {filteredDishes.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '30px 10px', color: 'var(--text-dim)' }}>
-                <p style={{ fontSize: '14px' }}>No hay platos que coincidan con la búsqueda</p>
+              <div style={{ textAlign: 'center', padding: '24px 10px', color: '#64748b' }}>
+                <p style={{ fontSize: '13px' }}>No hay platos en esta categoría.</p>
+                <p style={{ fontSize: '12px', color: '#94a3b8', marginTop: '4px' }}>
+                  Pulsa &quot;Crear nuevo plato&quot; para añadir el primero.
+                </p>
               </div>
             ) : (
               filteredDishes.map((dish) => {
@@ -232,24 +218,23 @@ export default function DishPickerModal({
                       onSelectDish(dish.id);
                       onClose();
                     }}
-                    className="glass-card"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '12px',
-                      padding: '12px',
+                      gap: '10px',
+                      padding: '10px 12px',
                       cursor: 'pointer',
-                      border: isSelected ? '1px solid var(--accent-green)' : '1px solid var(--border-subtle)',
-                      background: isSelected ? 'var(--accent-green-subtle)' : 'var(--bg-card)',
+                      borderRadius: '8px',
+                      border: isSelected ? '1px solid #000000' : '1px solid #e2e8f0',
+                      background: isSelected ? '#f8fafc' : '#ffffff',
                     }}
                   >
-                    {/* Dish image or placeholder */}
                     <div style={{
-                      width: '54px',
-                      height: '54px',
-                      borderRadius: '12px',
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '6px',
                       overflow: 'hidden',
-                      background: 'var(--bg-tertiary)',
+                      background: '#f1f5f9',
                       flexShrink: 0,
                       display: 'flex',
                       alignItems: 'center',
@@ -264,29 +249,15 @@ export default function DishPickerModal({
                           loading="lazy"
                         />
                       ) : (
-                        <UtensilsCrossed size={22} color="var(--accent-green)" />
+                        <UtensilsCrossed size={18} color="#64748b" />
                       )}
                     </div>
 
-                    {/* Dish text */}
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
-                        <span style={{
-                          fontSize: '10px',
-                          fontWeight: '700',
-                          textTransform: 'uppercase',
-                          color: dish.type === 'comida' ? 'var(--accent-gold)' : dish.type === 'cena' ? '#a78bfa' : 'var(--accent-green)',
-                        }}>
-                          {dish.type === 'comida' ? 'Comida' : dish.type === 'cena' ? 'Cena' : 'Comida / Cena'}
-                        </span>
-                        <span style={{ fontSize: '11px', color: 'var(--text-dim)' }}>
-                          • {dish.ingredients.length} ing.
-                        </span>
-                      </div>
                       <h4 style={{
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        color: 'var(--text-main)',
+                        fontSize: '13px',
+                        fontWeight: '700',
+                        color: '#0f172a',
                         lineHeight: 1.25,
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
@@ -294,46 +265,17 @@ export default function DishPickerModal({
                       }}>
                         {dish.name}
                       </h4>
-                      {dish.tags.length > 0 && (
-                        <div style={{ display: 'flex', gap: '4px', marginTop: '4px', flexWrap: 'wrap' }}>
-                          {dish.tags.slice(0, 2).map(tag => (
-                            <span
-                              key={tag}
-                              style={{
-                                fontSize: '10px',
-                                background: 'rgba(255, 255, 255, 0.05)',
-                                color: 'var(--text-dim)',
-                                padding: '1px 6px',
-                                borderRadius: '4px'
-                              }}
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      )}
+                      <div style={{ fontSize: '11px', color: '#64748b', marginTop: '1px' }}>
+                        {dish.ingredients.length} alimentos de Mercadona
+                      </div>
                     </div>
 
-                    {/* Cost and select icon */}
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px', flexShrink: 0 }}>
-                      <span className="price-text" style={{ fontSize: '14px', color: 'var(--accent-green-light)', fontWeight: '700' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+                      <span className="price-text" style={{ fontSize: '13px', color: '#000000', fontWeight: '800' }}>
                         {dish.estimatedCost > 0 ? `${dish.estimatedCost.toFixed(2)} €` : '0.00 €'}
                       </span>
-                      {isSelected ? (
-                        <div style={{
-                          width: '24px',
-                          height: '24px',
-                          borderRadius: 'var(--radius-full)',
-                          background: 'var(--accent-green)',
-                          color: '#070a12',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}>
-                          <Check size={14} strokeWidth={3} />
-                        </div>
-                      ) : (
-                        <span style={{ fontSize: '11px', color: 'var(--text-dim)' }}>Elegir</span>
+                      {isSelected && (
+                        <Check size={16} strokeWidth={3} color="#000000" />
                       )}
                     </div>
                   </div>

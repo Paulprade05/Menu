@@ -8,9 +8,7 @@ import {
   ShoppingCart,
   Settings,
   RefreshCw,
-  Sparkles,
   Store,
-  Share2,
   CheckCircle2,
   AlertCircle
 } from 'lucide-react';
@@ -45,7 +43,7 @@ export default function Navigation() {
     },
     {
       id: 'shopping' as const,
-      label: 'Lista Compra',
+      label: 'Lista de la Compra',
       shortLabel: 'Compra',
       icon: ShoppingCart,
       badge: totalItemsCount > 0 ? `${totalItemsCount - checkedItemsCount}` : null,
@@ -61,34 +59,37 @@ export default function Navigation() {
 
   return (
     <>
-      {/* Desktop Sidebar */}
+      {/* Desktop Sidebar (Classic Clean White & Black) */}
       <aside className="desktop-sidebar">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '28px', padding: '0 8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px', padding: '0 4px' }}>
           <div style={{
-            width: '44px',
-            height: '44px',
-            borderRadius: '14px',
-            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+            width: '38px',
+            height: '38px',
+            borderRadius: '8px',
+            background: '#000000',
+            color: '#ffffff',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 4px 16px rgba(16, 185, 129, 0.35)',
             flexShrink: 0
           }}>
-            <UtensilsCrossed size={22} color="#ffffff" />
+            <UtensilsCrossed size={20} />
           </div>
           <div>
-            <h2 style={{ fontSize: '17px', fontWeight: '800', lineHeight: 1.2 }}>Menú & Compra</h2>
+            <h2 style={{ fontSize: '15px', fontWeight: '800', lineHeight: 1.2, letterSpacing: '-0.02em' }}>
+              Menú & Compra
+            </h2>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
-              <span className="badge badge-green" style={{ fontSize: '10px', padding: '1px 6px' }}>
-                <Store size={10} /> Mercadona CP {settings.postalCode}
+              <span className="badge" style={{ fontSize: '10px', background: '#f1f5f9', color: '#0f172a', border: '1px solid #e2e8f0', padding: '1px 6px' }}>
+                <Store size={10} style={{ display: 'inline', marginRight: '3px' }} />
+                Logroño ({settings.postalCode})
               </span>
             </div>
           </div>
         </div>
 
         {/* Navigation Links */}
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
+        <nav style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -99,27 +100,27 @@ export default function Navigation() {
                 className="btn"
                 style={{
                   justifyContent: 'flex-start',
-                  padding: '12px 14px',
-                  background: isActive ? 'var(--accent-green-subtle)' : 'transparent',
-                  color: isActive ? 'var(--accent-green-light)' : 'var(--text-muted)',
-                  border: isActive ? '1px solid rgba(16, 185, 129, 0.25)' : '1px solid transparent',
-                  position: 'relative',
+                  padding: '10px 12px',
+                  background: isActive ? '#000000' : 'transparent',
+                  color: isActive ? '#ffffff' : '#475569',
+                  border: '1px solid transparent',
+                  borderRadius: '8px',
                   width: '100%',
+                  fontWeight: isActive ? '700' : '500',
+                  fontSize: '13px',
                 }}
               >
-                <Icon size={20} color={isActive ? '#10b981' : '#94a3b8'} />
-                <span style={{ fontSize: '14px', fontWeight: isActive ? '700' : '500' }}>
-                  {item.label}
-                </span>
+                <Icon size={18} color={isActive ? '#ffffff' : '#64748b'} />
+                <span>{item.label}</span>
                 {item.badge && (
                   <span
                     style={{
                       marginLeft: 'auto',
-                      background: 'var(--accent-green)',
-                      color: '#070a12',
-                      fontSize: '11px',
+                      background: isActive ? '#ffffff' : '#000000',
+                      color: isActive ? '#000000' : '#ffffff',
+                      fontSize: '10px',
                       fontWeight: '800',
-                      padding: '2px 8px',
+                      padding: '2px 7px',
                       borderRadius: '12px',
                     }}
                   >
@@ -132,20 +133,27 @@ export default function Navigation() {
         </nav>
 
         {/* Quick Stats in Sidebar */}
-        <div className="glass-card" style={{ padding: '16px', marginTop: 'auto', marginBottom: '14px' }}>
+        <div style={{
+          background: '#f8fafc',
+          border: '1px solid #e2e8f0',
+          borderRadius: '8px',
+          padding: '14px',
+          marginTop: 'auto',
+          marginBottom: '12px'
+        }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <span style={{ fontSize: '12px', color: 'var(--text-dim)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              Estimación Menú
+            <span style={{ fontSize: '11px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>
+              Menú Semanal
             </span>
-            <span className="price-text" style={{ fontSize: '15px', color: 'var(--accent-gold)' }}>
+            <span className="price-text" style={{ fontSize: '13px', color: '#0f172a' }}>
               {menuTotalCost.toFixed(2)} €
             </span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '12px', color: 'var(--text-dim)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <span style={{ fontSize: '11px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>
               Lista Compra
             </span>
-            <span className="price-text" style={{ fontSize: '15px', color: 'var(--accent-green-light)' }}>
+            <span className="price-text" style={{ fontSize: '14px', color: '#000000', fontWeight: '800' }}>
               {shoppingTotalCost.toFixed(2)} €
             </span>
           </div>
@@ -155,14 +163,13 @@ export default function Navigation() {
         <button
           onClick={() => syncToCloud()}
           className="btn btn-secondary"
-          style={{ width: '100%', fontSize: '12px', padding: '8px 12px', justifyContent: 'center' }}
+          style={{ width: '100%', fontSize: '12px', padding: '8px 10px', justifyContent: 'center' }}
         >
           <RefreshCw
-            size={14}
-            className={syncStatus === 'syncing' ? 'spin-anim' : ''}
+            size={13}
             style={{ animation: syncStatus === 'syncing' ? 'spin 1s linear infinite' : 'none' }}
           />
-          {syncStatus === 'syncing' ? 'Sincronizando...' : syncStatus === 'synced' ? 'Sincronizado ✓' : `Sync (${settings.syncCode})`}
+          <span>{syncStatus === 'syncing' ? 'Sincronizando...' : syncStatus === 'synced' ? 'Sincronizado' : `Sync (${settings.syncCode})`}</span>
         </button>
       </aside>
 
@@ -170,49 +177,57 @@ export default function Navigation() {
       <header className="mobile-top-bar">
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{
-            width: '34px',
-            height: '34px',
-            borderRadius: '10px',
-            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+            width: '32px',
+            height: '32px',
+            borderRadius: '6px',
+            background: '#000000',
+            color: '#ffffff',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)',
           }}>
-            <UtensilsCrossed size={18} color="#ffffff" />
+            <UtensilsCrossed size={16} />
           </div>
           <div>
-            <h1 style={{ fontSize: '16px', fontWeight: '800', lineHeight: 1.1 }}>
+            <h1 style={{ fontSize: '14px', fontWeight: '800', lineHeight: 1.1, color: '#0f172a' }}>
               {activeTab === 'menu' && 'Menú Semanal'}
               {activeTab === 'dishes' && 'Banco de Platos'}
               {activeTab === 'shopping' && 'Lista de la Compra'}
-              {activeTab === 'settings' && 'Ajustes & Sincronización'}
+              {activeTab === 'settings' && 'Ajustes'}
             </h1>
-            <span style={{ fontSize: '11px', color: 'var(--text-dim)' }}>
-              Mercadona CP {settings.postalCode} • {settings.syncCode}
+            <span style={{ fontSize: '10px', color: '#64748b', fontWeight: '500' }}>
+              Mercadona Logroño ({settings.postalCode})
             </span>
           </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           {activeTab === 'shopping' && shoppingTotalCost > 0 && (
-            <div className="badge badge-green" style={{ fontSize: '13px' }}>
+            <div style={{
+              background: '#000000',
+              color: '#ffffff',
+              padding: '3px 8px',
+              borderRadius: '6px',
+              fontSize: '12px',
+              fontWeight: '700'
+            }}>
               <span className="price-text">{shoppingTotalCost.toFixed(2)} €</span>
             </div>
           )}
           <button
             onClick={() => syncToCloud()}
             className="btn btn-ghost btn-icon"
-            title="Sincronizar con la nube"
-            style={{ width: '36px', height: '36px' }}
+            title="Sincronizar"
+            style={{ width: '32px', height: '32px', padding: 0 }}
           >
             {syncStatus === 'synced' ? (
-              <CheckCircle2 size={18} color="#10b981" />
+              <CheckCircle2 size={16} color="#000000" />
             ) : syncStatus === 'error' ? (
-              <AlertCircle size={18} color="#f43f5e" />
+              <AlertCircle size={16} color="#dc2626" />
             ) : (
               <RefreshCw
-                size={18}
+                size={16}
+                color="#64748b"
                 style={{ animation: syncStatus === 'syncing' ? 'spin 1s linear infinite' : 'none' }}
               />
             )}
@@ -220,7 +235,7 @@ export default function Navigation() {
         </div>
       </header>
 
-      {/* Mobile Bottom Tab Bar (iOS Native Style) */}
+      {/* Mobile Bottom Tab Bar (Classic Clean White & Black) */}
       <nav className="mobile-nav-bar" aria-label="Navegación principal">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -232,9 +247,11 @@ export default function Navigation() {
               className={`nav-tab-btn ${isActive ? 'active' : ''}`}
             >
               <div className="nav-icon-container">
-                <Icon size={20} />
+                <Icon size={19} color={isActive ? '#000000' : '#94a3b8'} strokeWidth={isActive ? 2.5 : 1.75} />
               </div>
-              <span>{item.shortLabel}</span>
+              <span style={{ color: isActive ? '#000000' : '#94a3b8', fontWeight: isActive ? '700' : '500' }}>
+                {item.shortLabel}
+              </span>
               {item.badge && <span className="nav-tab-badge">{item.badge}</span>}
             </button>
           );

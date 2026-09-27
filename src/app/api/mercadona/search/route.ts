@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { MercadonaProduct } from '@/types';
 import { getWarehouseFromPostalCode } from '@/data/initialData';
-import { searchCatalogLocally } from '@/data/mercadonaCatalog';
+import { searchAllMercadonaProducts, getTotalProductsCount } from '@/data/mercadonaSearchEngine';
 
 export const dynamic = 'force-dynamic';
-export const preferredRegion = ['mad1', 'cdg1', 'fra1'];
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get('q')?.trim() || '';
-  const postalCode = searchParams.get('postalCode') || '46001';
+  const postalCode = searchParams.get('postalCode') || '26001';
   let warehouse = searchParams.get('warehouse') || '';
 
   if (!warehouse && postalCode) {
@@ -17,9 +16,17 @@ export async function GET(request: NextRequest) {
   }
 
   if (!query) {
-    return NextResponse.json({ hits: [], total: 0 });
+    return NextResponse.json({
+      hits: [],
+      total: 0,
+      totalCatalogSize: getTotalProductsCount()
+    });
   }
 
+  // 1. Search across the complete Mercadona catalogue (all 4,332 products indexed)
+  const fullCatalogMatches = searchAllMercadonaProducts(query, 50);
+
+  // 2. Also attempt live Tornillos search if possible
   try {
     const tornillosUrl = new URL('https://tornillos.mercadona.es/search');
     tornillosUrl.searchParams.set('q', query);
@@ -30,10 +37,7 @@ export async function GET(request: NextRequest) {
     const response = await fetch(tornillosUrl.toString(), {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-        'Accept': 'application/json, text/plain, */*',
-        'Accept-Language': 'es-ES,es;q=0.9,en;q=0.8',
-        'Referer': 'https://tienda.mercadona.es/',
-        'Origin': 'https://tienda.mercadona.es',
+        'Accept': 'application/json',
       },
       next: { revalidate: 600 }
     });
@@ -43,7 +47,7 @@ export async function GET(request: NextRequest) {
       const rawHits = data.hits || [];
 
       if (rawHits.length > 0) {
-        const products: MercadonaProduct[] = rawHits.map((p: any) => {
+        const liveProducts: MercadonaProduct[] = rawHits.map((p: any) => {
           const unitPriceStr = p.price_instructions?.unit_price || p.price_instructions?.bulk_price || '0';
           const parsedPrice = parseFloat(unitPriceStr) || 0;
           const bulkPriceStr = p.price_instructions?.bulk_price;
@@ -70,24 +74,33 @@ export async function GET(request: NextRequest) {
           };
         });
 
+        // Merge live results with indexed catalog ensuring no duplicates
+        const seenIds = new Set(liveProducts.map(p => p.id));
+        const combined = [...liveProducts];
+        for (const item of fullCatalogMatches) {
+          if (!seenIds.has(item.id)) {
+            combined.push(item);
+            seenIds.add(item.id);
+          }
+        }
+
         return NextResponse.json({
-          hits: products,
-          total: products.length,
-          source: 'mercadona-live',
-          warehouse: warehouse || 'default',
+          hits: combined.slice(0, 50),
+          total: combined.length,
+          source: 'live-and-catalog',
+          warehouse: warehouse || 'zgz1',
         });
       }
     }
-  } catch (error) {
-    console.warn('Direct Mercadona fetch failed, falling back to local catalog:', error);
+  } catch (e) {
+    // Live fetch failed, use complete catalog
   }
 
-  // Graceful fallback to verified Mercadona catalog
-  const localHits = searchCatalogLocally(query);
   return NextResponse.json({
-    hits: localHits,
-    total: localHits.length,
-    source: 'mercadona-catalog',
-    warehouse: warehouse || 'default',
+    hits: fullCatalogMatches,
+    total: fullCatalogMatches.length,
+    source: 'full-catalog',
+    totalCatalogSize: getTotalProductsCount(),
+    warehouse: warehouse || 'zgz1',
   });
 }

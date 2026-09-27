@@ -21,11 +21,11 @@ import {
 } from '@/data/initialData';
 
 const STORAGE_KEYS = {
-  DISHES: 'mercadona_dishes_v1',
-  WEEK_MENU: 'mercadona_week_menu_v1',
-  SAVED_MENUS: 'mercadona_saved_menus_v1',
-  SHOPPING_LIST: 'mercadona_shopping_list_v1',
-  SETTINGS: 'mercadona_settings_v1',
+  DISHES: 'mercadona_dishes_v2',
+  WEEK_MENU: 'mercadona_week_menu_v2',
+  SAVED_MENUS: 'mercadona_saved_menus_v2',
+  SHOPPING_LIST: 'mercadona_shopping_list_v2',
+  SETTINGS: 'mercadona_settings_v2',
 };
 
 interface AppContextType {
@@ -69,6 +69,7 @@ interface AppContextType {
   // Settings & Sync
   settings: UserSettings;
   updateSettings: (updates: Partial<UserSettings>) => void;
+  resetAllData: () => void;
   syncStatus: 'idle' | 'syncing' | 'synced' | 'error';
   syncErrorMsg: string | null;
   lastSyncTime: Date | null;
@@ -438,6 +439,25 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
+  const resetAllData = useCallback(() => {
+    setDishes([]);
+    setWeekMenu(INITIAL_WEEK_MENU);
+    setSavedMenus([]);
+    setShoppingList([]);
+    try {
+      localStorage.removeItem(STORAGE_KEYS.DISHES);
+      localStorage.removeItem(STORAGE_KEYS.WEEK_MENU);
+      localStorage.removeItem(STORAGE_KEYS.SAVED_MENUS);
+      localStorage.removeItem(STORAGE_KEYS.SHOPPING_LIST);
+      localStorage.removeItem('mercadona_dishes_v1');
+      localStorage.removeItem('mercadona_week_menu_v1');
+      localStorage.removeItem('mercadona_saved_menus_v1');
+      localStorage.removeItem('mercadona_shopping_list_v1');
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+
   // Cloud Sync
   const syncToCloud = useCallback(async (): Promise<boolean> => {
     if (!settings.syncCode) return false;
@@ -582,6 +602,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         clearAllShoppingItems,
         settings,
         updateSettings,
+        resetAllData,
         syncStatus,
         syncErrorMsg,
         lastSyncTime,
