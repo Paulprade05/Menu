@@ -1,99 +1,92 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { getSyncStore } from '@/lib/syncStore';
+import {
+  MAX_SYNC_DOC_BYTES,
+  isValidSyncCode,
+  mergeSyncDocs,
+  normalizeSyncCode,
+  normalizeSyncDoc,
+} from '@/lib/sync';
 
 export const dynamic = 'force-dynamic';
 
-// File-based store for local and serverless persistence fallback
-const SYNC_CACHE = new Map<string, any>();
-const DATA_DIR = path.join(process.cwd(), '.sync-data');
+const NO_STORE = { 'Cache-Control': 'no-store' };
 
-function ensureDataDir() {
-  try {
-    if (!fs.existsSync(DATA_DIR)) {
-      fs.mkdirSync(DATA_DIR, { recursive: true });
-    }
-  } catch (e) {
-    // Ignore in read-only environments
-  }
+function json(body: unknown, status = 200) {
+  return NextResponse.json(body, { status, headers: NO_STORE });
 }
 
-function getSyncFilePath(code: string): string {
-  const safeCode = code.replace(/[^a-zA-Z0-9_-]/g, '_');
-  return path.join(DATA_DIR, `${safeCode}.json`);
+function notConfigured() {
+  return json(
+    {
+      error: 'not_configured',
+      message: 'La sincronización no está configurada en el servidor (falta la base de datos Upstash Redis).',
+    },
+    503,
+  );
 }
 
-function readSyncData(code: string) {
-  if (SYNC_CACHE.has(code)) {
-    return SYNC_CACHE.get(code);
-  }
-  try {
-    const filePath = getSyncFilePath(code);
-    if (fs.existsSync(filePath)) {
-      const content = fs.readFileSync(filePath, 'utf-8');
-      const data = JSON.parse(content);
-      SYNC_CACHE.set(code, data);
-      return data;
-    }
-  } catch (e) {
-    console.error('Error reading sync file:', e);
-  }
-  return null;
+/** GET /api/sync → is sync available on this server? (codes never travel in URLs) */
+export async function GET() {
+  const store = getSyncStore();
+  return json({ configured: store.backend !== 'none', backend: store.backend });
 }
 
-function writeSyncData(code: string, data: any) {
-  SYNC_CACHE.set(code, data);
-  try {
-    ensureDataDir();
-    const filePath = getSyncFilePath(code);
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
-  } catch (e) {
-    // In strict read-only serverless, in-memory cache still holds state during lifecycle
-    console.warn('Could not persist sync file to disk:', e);
-  }
-}
-
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const code = (searchParams.get('code') || '').toUpperCase().trim();
-
-  if (!code) {
-    return NextResponse.json({ error: 'Falta el código de sincronización' }, { status: 400 });
-  }
-
-  const data = readSyncData(code);
-  if (!data) {
-    return NextResponse.json({ found: false, message: 'No hay datos guardados para este código todavía' }, { status: 404 });
-  }
-
-  return NextResponse.json({ found: true, data });
-}
-
+/**
+ * POST /api/sync
+ *   { action: 'pull', code }        → { found, doc }
+ *   { action: 'push', code, doc }   → { doc } (server copy merged with the incoming one)
+ */
 export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    const code = (body.syncCode || body.code || '').toUpperCase().trim();
+  const raw = await request.text();
+  if (raw.length > MAX_SYNC_DOC_BYTES + 2_000) {
+    return json({ error: 'too_large', message: 'Hay demasiados datos para sincronizar.' }, 413);
+  }
 
-    if (!code) {
-      return NextResponse.json({ error: 'Falta el código de sincronización' }, { status: 400 });
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    return json({ error: 'bad_request', message: 'Petición no válida.' }, 400);
+  }
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    return json({ error: 'bad_request', message: 'Petición no válida.' }, 400);
+  }
+  const body = parsed as { action?: unknown; code?: unknown; doc?: unknown };
+
+  const code = normalizeSyncCode(typeof body.code === 'string' ? body.code : '');
+  if (!isValidSyncCode(code)) {
+    return json({ error: 'bad_code', message: 'El código de hogar no es válido.' }, 400);
+  }
+
+  const store = getSyncStore();
+  if (store.backend === 'none') return notConfigured();
+
+  try {
+    if (body.action === 'pull') {
+      const stored = normalizeSyncDoc(await store.read(code));
+      return json({ found: Boolean(stored), doc: stored });
     }
 
-    const payload = {
-      ...body,
-      syncCode: code,
-      updatedAt: new Date().toISOString(),
-      timestamp: Date.now(),
-    };
+    if (body.action === 'push') {
+      const incoming = normalizeSyncDoc(body.doc);
+      if (!incoming) {
+        return json({ error: 'bad_request', message: 'Datos no válidos.' }, 400);
+      }
+      const now = Date.now();
+      const stored = normalizeSyncDoc(await store.read(code), now);
+      const merged = stored ? mergeSyncDocs(stored, incoming, now) : incoming;
+      merged.updatedAt = now;
+      if (JSON.stringify(merged).length > MAX_SYNC_DOC_BYTES) {
+        return json({ error: 'too_large', message: 'Hay demasiados datos para sincronizar.' }, 413);
+      }
+      await store.write(code, merged);
+      return json({ doc: merged });
+    }
 
-    writeSyncData(code, payload);
-
-    return NextResponse.json({
-      success: true,
-      message: 'Datos sincronizados correctamente en la nube',
-      timestamp: payload.timestamp,
-    });
-  } catch (error: any) {
-    console.error('Error saving sync data:', error);
-    return NextResponse.json({ error: error.message || 'Error al sincronizar' }, { status: 500 });
+    return json({ error: 'bad_request', message: 'Acción desconocida.' }, 400);
+  } catch (error) {
+    console.error('[sync]', error);
+    return json({ error: 'server_error', message: 'No se pudo conectar con la base de datos.' }, 502);
   }
 }

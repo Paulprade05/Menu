@@ -1,269 +1,158 @@
 'use client';
 
 import React from 'react';
+import { CalendarDays, Cloud, CloudOff, RefreshCw, Settings, ShoppingCart, UtensilsCrossed } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
-import {
-  CalendarDays,
-  UtensilsCrossed,
-  ShoppingCart,
-  Settings,
-  RefreshCw,
-  Store,
-  CheckCircle2,
-  AlertCircle
-} from 'lucide-react';
+import { formatEuro, formatRelativeTime } from '@/lib/format';
+import type { AppTab } from '@/types';
+
+const NAV_ITEMS: { id: AppTab; label: string; shortLabel: string; icon: typeof CalendarDays }[] = [
+  { id: 'menu', label: 'Menú semanal', shortLabel: 'Menú', icon: CalendarDays },
+  { id: 'dishes', label: 'Mis platos', shortLabel: 'Platos', icon: UtensilsCrossed },
+  { id: 'shopping', label: 'Lista de la compra', shortLabel: 'Compra', icon: ShoppingCart },
+  { id: 'settings', label: 'Ajustes', shortLabel: 'Ajustes', icon: Settings },
+];
 
 export default function Navigation() {
   const {
     activeTab,
     setActiveTab,
-    totalItemsCount,
-    checkedItemsCount,
+    pendingItemsCount,
+    dishes,
     menuTotalCost,
-    shoppingTotalCost,
-    syncStatus,
-    syncToCloud,
-    settings,
+    plannedMealsCount,
+    maxMealsCount,
+    shoppingPendingCost,
+    storeLabel,
+    sync,
+    syncNow,
   } = useApp();
 
-  const navItems = [
-    {
-      id: 'menu' as const,
-      label: 'Menú Semanal',
-      shortLabel: 'Menú',
-      icon: CalendarDays,
-      badge: null,
-    },
-    {
-      id: 'dishes' as const,
-      label: 'Banco de Platos',
-      shortLabel: 'Platos',
-      icon: UtensilsCrossed,
-      badge: null,
-    },
-    {
-      id: 'shopping' as const,
-      label: 'Lista de la Compra',
-      shortLabel: 'Compra',
-      icon: ShoppingCart,
-      badge: totalItemsCount > 0 ? `${totalItemsCount - checkedItemsCount}` : null,
-    },
-    {
-      id: 'settings' as const,
-      label: 'Ajustes & Sync',
-      shortLabel: 'Ajustes',
-      icon: Settings,
-      badge: null,
-    },
-  ];
+  // Only worth the user's attention when something is wrong with the household sync
+  const syncProblem = !sync.enabled
+    ? null
+    : sync.status === 'offline'
+      ? 'sin conexión: se sincronizará después'
+      : sync.status === 'error' || sync.status === 'unconfigured'
+        ? 'problema al sincronizar'
+        : null;
+
+  const countFor = (id: AppTab): number | null => {
+    if (id === 'shopping') return pendingItemsCount > 0 ? pendingItemsCount : null;
+    if (id === 'dishes') return dishes.length > 0 ? dishes.length : null;
+    return null;
+  };
 
   return (
     <>
-      {/* Desktop Sidebar (Classic Clean White & Black) */}
-      <aside className="desktop-sidebar">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px', padding: '0 4px' }}>
-          <div style={{
-            width: '38px',
-            height: '38px',
-            borderRadius: '8px',
-            background: '#000000',
-            color: '#ffffff',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0
-          }}>
-            <UtensilsCrossed size={20} />
-          </div>
-          <div>
-            <h2 style={{ fontSize: '15px', fontWeight: '800', lineHeight: 1.2, letterSpacing: '-0.02em' }}>
-              Menú & Compra
-            </h2>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
-              <span className="badge" style={{ fontSize: '10px', background: '#f1f5f9', color: '#0f172a', border: '1px solid #e2e8f0', padding: '1px 6px' }}>
-                <Store size={10} style={{ display: 'inline', marginRight: '3px' }} />
-                Logroño ({settings.postalCode})
-              </span>
-            </div>
+      {/* Desktop sidebar */}
+      <aside className="sidebar" aria-label="Menú principal">
+        <div className="sidebar__brand">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/icon-192.png" alt="" className="sidebar__logo" width={42} height={42} />
+          <div className="grow">
+            <div className="sidebar__title">Menú &amp; Compra</div>
+            <div className="sidebar__store ellipsis">{storeLabel}</div>
           </div>
         </div>
 
-        {/* Navigation Links */}
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
-          {navItems.map((item) => {
+        <nav className="sidebar__nav">
+          {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
+            const count = countFor(item.id);
             return (
               <button
                 key={item.id}
+                type="button"
+                className={`sidebar__link${isActive ? ' is-active' : ''}`}
                 onClick={() => setActiveTab(item.id)}
-                className="btn"
-                style={{
-                  justifyContent: 'flex-start',
-                  padding: '10px 12px',
-                  background: isActive ? '#000000' : 'transparent',
-                  color: isActive ? '#ffffff' : '#475569',
-                  border: '1px solid transparent',
-                  borderRadius: '8px',
-                  width: '100%',
-                  fontWeight: isActive ? '700' : '500',
-                  fontSize: '13px',
-                }}
+                aria-current={isActive ? 'page' : undefined}
               >
-                <Icon size={18} color={isActive ? '#ffffff' : '#64748b'} />
+                <Icon size={19} strokeWidth={isActive ? 2.4 : 2} />
                 <span>{item.label}</span>
-                {item.badge && (
-                  <span
-                    style={{
-                      marginLeft: 'auto',
-                      background: isActive ? '#ffffff' : '#000000',
-                      color: isActive ? '#000000' : '#ffffff',
-                      fontSize: '10px',
-                      fontWeight: '800',
-                      padding: '2px 7px',
-                      borderRadius: '12px',
-                    }}
-                  >
-                    {item.badge}
-                  </span>
-                )}
+                {count !== null && <span className="sidebar__count">{count}</span>}
               </button>
             );
           })}
         </nav>
 
-        {/* Quick Stats in Sidebar */}
-        <div style={{
-          background: '#f8fafc',
-          border: '1px solid #e2e8f0',
-          borderRadius: '8px',
-          padding: '14px',
-          marginTop: 'auto',
-          marginBottom: '12px'
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <span style={{ fontSize: '11px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>
-              Menú Semanal
-            </span>
-            <span className="price-text" style={{ fontSize: '13px', color: '#0f172a' }}>
-              {menuTotalCost.toFixed(2)} €
-            </span>
+        <div className="sidebar__stats">
+          <div className="sidebar__stat">
+            <span>Comidas planificadas</span>
+            <strong>
+              {plannedMealsCount}/{maxMealsCount}
+            </strong>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '11px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>
-              Lista Compra
-            </span>
-            <span className="price-text" style={{ fontSize: '14px', color: '#000000', fontWeight: '800' }}>
-              {shoppingTotalCost.toFixed(2)} €
-            </span>
+          <div className="sidebar__stat">
+            <span>Coste del menú</span>
+            <strong className="price">{formatEuro(menuTotalCost)}</strong>
+          </div>
+          <div className="sidebar__stat">
+            <span>Falta por comprar</span>
+            <strong className="price">{formatEuro(shoppingPendingCost)}</strong>
           </div>
         </div>
 
-        {/* Cloud Sync Status */}
-        <button
-          onClick={() => syncToCloud()}
-          className="btn btn-secondary"
-          style={{ width: '100%', fontSize: '12px', padding: '8px 10px', justifyContent: 'center' }}
-        >
-          <RefreshCw
-            size={13}
-            style={{ animation: syncStatus === 'syncing' ? 'spin 1s linear infinite' : 'none' }}
-          />
-          <span>{syncStatus === 'syncing' ? 'Sincronizando...' : syncStatus === 'synced' ? 'Sincronizado' : `Sync (${settings.syncCode})`}</span>
-        </button>
+        {sync.enabled && (
+          <button type="button" className="btn btn-secondary btn-sm btn-block" onClick={() => void syncNow()}>
+            {sync.status === 'syncing' ? (
+              <RefreshCw size={15} className="spin" />
+            ) : sync.status === 'offline' || sync.status === 'error' || sync.status === 'unconfigured' ? (
+              <CloudOff size={15} />
+            ) : (
+              <Cloud size={15} />
+            )}
+            <span>
+              {sync.status === 'syncing'
+                ? 'Sincronizando…'
+                : sync.status === 'offline'
+                  ? 'Sin conexión'
+                  : sync.status === 'error' || sync.status === 'unconfigured'
+                    ? 'Error al sincronizar'
+                    : `Sincronizado ${formatRelativeTime(sync.lastSyncAt)}`}
+            </span>
+          </button>
+        )}
       </aside>
 
-      {/* Mobile Top Bar */}
-      <header className="mobile-top-bar">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{
-            width: '32px',
-            height: '32px',
-            borderRadius: '6px',
-            background: '#000000',
-            color: '#ffffff',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-            <UtensilsCrossed size={16} />
-          </div>
-          <div>
-            <h1 style={{ fontSize: '14px', fontWeight: '800', lineHeight: 1.1, color: '#0f172a' }}>
-              {activeTab === 'menu' && 'Menú Semanal'}
-              {activeTab === 'dishes' && 'Banco de Platos'}
-              {activeTab === 'shopping' && 'Lista de la Compra'}
-              {activeTab === 'settings' && 'Ajustes'}
-            </h1>
-            <span style={{ fontSize: '10px', color: '#64748b', fontWeight: '500' }}>
-              Mercadona Logroño ({settings.postalCode})
-            </span>
-          </div>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          {activeTab === 'shopping' && shoppingTotalCost > 0 && (
-            <div style={{
-              background: '#000000',
-              color: '#ffffff',
-              padding: '3px 8px',
-              borderRadius: '6px',
-              fontSize: '12px',
-              fontWeight: '700'
-            }}>
-              <span className="price-text">{shoppingTotalCost.toFixed(2)} €</span>
-            </div>
-          )}
-          <button
-            onClick={() => syncToCloud()}
-            className="btn btn-ghost btn-icon"
-            title="Sincronizar"
-            style={{ width: '32px', height: '32px', padding: 0 }}
-          >
-            {syncStatus === 'synced' ? (
-              <CheckCircle2 size={16} color="#000000" />
-            ) : syncStatus === 'error' ? (
-              <AlertCircle size={16} color="#dc2626" />
-            ) : (
-              <RefreshCw
-                size={16}
-                color="#64748b"
-                style={{ animation: syncStatus === 'syncing' ? 'spin 1s linear infinite' : 'none' }}
-              />
-            )}
-          </button>
-        </div>
-      </header>
-
-      {/* Mobile Bottom Tab Bar (Classic Clean White & Black) */}
-      <nav className="mobile-nav-bar" aria-label="Navegación principal">
-        {navItems.map((item) => {
+      {/* Phone tab bar */}
+      <nav className="tabbar" aria-label="Menú principal">
+        {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
+          const badge = item.id === 'shopping' ? countFor('shopping') : null;
+          const syncWarning = item.id === 'settings' ? syncProblem : null;
+          const label = badge
+            ? `${item.label}, ${badge} por comprar`
+            : syncWarning
+              ? `${item.label}, ${syncWarning}`
+              : item.label;
           return (
             <button
               key={item.id}
+              type="button"
+              className={`tabbar__item${isActive ? ' is-active' : ''}`}
               onClick={() => setActiveTab(item.id)}
-              className={`nav-tab-btn ${isActive ? 'active' : ''}`}
+              aria-current={isActive ? 'page' : undefined}
+              aria-label={label}
             >
-              <div className="nav-icon-container">
-                <Icon size={19} color={isActive ? '#000000' : '#94a3b8'} strokeWidth={isActive ? 2.5 : 1.75} />
-              </div>
-              <span style={{ color: isActive ? '#000000' : '#94a3b8', fontWeight: isActive ? '700' : '500' }}>
-                {item.shortLabel}
+              <span className="tabbar__icon">
+                <Icon size={24} strokeWidth={isActive ? 2.4 : 1.8} />
               </span>
-              {item.badge && <span className="nav-tab-badge">{item.badge}</span>}
+              <span>{item.shortLabel}</span>
+              {badge !== null && <span className="tabbar__badge">{badge > 99 ? '99+' : badge}</span>}
+              {syncWarning && (
+                <span
+                  className={`tabbar__dot${sync.status === 'offline' ? ' tabbar__dot--muted' : ''}`}
+                  title={syncWarning}
+                  aria-hidden="true"
+                />
+              )}
             </button>
           );
         })}
       </nav>
-
-      <style jsx global>{`
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
     </>
   );
 }

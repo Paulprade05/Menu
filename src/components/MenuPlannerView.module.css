@@ -1,0 +1,324 @@
+/* MenuPlannerView — weekly menu (also used by MenuTemplatesSheet) */
+
+/* Header subtitle: "8 de 12" → "8/12" on 320px phones (iPhone SE with display zoom) */
+.subtitleSlash {
+  display: none;
+}
+
+@media (max-width: 359px) {
+  .subtitleOf {
+    display: none;
+  }
+
+  .subtitleSlash {
+    display: inline;
+  }
+}
+
+/* "Al azar" header button: icon only when the title would be cut off (≤359px) */
+.randomAction {
+  display: contents;
+}
+
+@media (max-width: 359px) {
+  .randomAction :global(.header-btn--labeled) :global(.header-btn__label) {
+    display: none;
+  }
+
+  .randomAction :global(.header-btn.header-btn--labeled) {
+    padding: 0 9px;
+  }
+}
+
+.onboarding {
+  margin-bottom: 16px;
+}
+
+.controls {
+  margin-bottom: 14px;
+}
+
+.daysToggle {
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .daysToggle {
+    width: 320px;
+  }
+}
+
+.hint {
+  margin-bottom: 14px;
+}
+
+.hintIcon {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--text);
+}
+
+.hint strong {
+  color: var(--text);
+  font-weight: 800;
+}
+
+/* --------------------------------------------------------------------------
+   Days
+   -------------------------------------------------------------------------- */
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+  }
+}
+
+@media (min-width: 900px) {
+  .grid {
+    gap: 16px;
+  }
+}
+
+.day {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-xs);
+}
+
+.dayToday {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 1px var(--ink), var(--shadow-md);
+}
+
+.dayHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 10px 14px 6px;
+}
+
+.dayName {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+}
+
+.todayTag {
+  height: 22px;
+  padding: 0 8px;
+  border-radius: var(--r-full);
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.dayCost {
+  margin-left: auto;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* One meal = one big tappable row */
+.meal {
+  flex: 1 0 auto; /* cards in the same grid row share the extra height */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 62px;
+  padding: 10px 10px 10px 14px;
+  border: 0;
+  border-top: 1px solid var(--border);
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  transition: background 0.15s ease;
+}
+
+.meal:active {
+  background: var(--surface-3);
+}
+
+/* The card clips overflow: draw the keyboard focus ring inside */
+.meal:focus-visible,
+.option:focus-visible {
+  outline-offset: -3px;
+}
+
+@media (hover: hover) {
+  .meal:hover {
+    background: var(--surface-2);
+  }
+
+  .meal:active {
+    background: var(--surface-3);
+  }
+}
+
+.mealIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+.mealEmpty .mealIcon {
+  background: transparent;
+  border: 1.5px dashed var(--border-strong);
+  color: var(--text-4);
+}
+
+.mealBody {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.mealLabel {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  line-height: 1.3;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.mealName {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.mealCustom {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text-2);
+  overflow-wrap: anywhere;
+}
+
+.mealCustom svg {
+  flex-shrink: 0;
+}
+
+.mealPlaceholder {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text-3);
+}
+
+.mealPrice {
+  flex-shrink: 0;
+  font-size: 13.5px;
+  color: var(--text-2);
+}
+
+.chevron {
+  flex-shrink: 0;
+  color: var(--text-4);
+}
+
+/* --------------------------------------------------------------------------
+   Options sheet
+   -------------------------------------------------------------------------- */
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.option {
+  min-height: 62px;
+}
+
+.option:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+@media (hover: hover) {
+  .option:not(:disabled):hover {
+    background: var(--surface-2);
+  }
+}
+
+.optionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--r-sm);
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+.optionDanger .optionIcon {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.optionDanger :global(.list-row__title) {
+  color: var(--danger);
+}
+
+/* --------------------------------------------------------------------------
+   Templates sheet
+   -------------------------------------------------------------------------- */
+
+.templateForm {
+  margin-bottom: 8px;
+}
+
+.templateForm label {
+  cursor: pointer;
+}
+
+.templateRow {
+  gap: 6px;
+  padding-right: 4px;
+}
+
+/* "Cargar" is the main action of the row: a bit bigger than btn-sm */
+.templateLoad {
+  min-height: 40px;
+}
+
+.templatePreview {
+  margin-top: 1px;
+  font-size: 12.5px;
+}

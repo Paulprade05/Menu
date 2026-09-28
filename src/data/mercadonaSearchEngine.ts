@@ -1,31 +1,32 @@
 import { MercadonaProduct } from '@/types';
+import { normalizeText } from '@/lib/utils';
 import fullCatalogJson from './mercadonaFullCatalog.json';
 
 const FULL_CATALOG: MercadonaProduct[] = fullCatalogJson as MercadonaProduct[];
 
-export function searchAllMercadonaProducts(query: string, maxResults: number = 40): MercadonaProduct[] {
-  if (!query || !query.trim()) return [];
+// Normalized once (lowercase, without accents) so every search is cheap
+const INDEX = FULL_CATALOG.map((product) => ({
+  product,
+  name: normalizeText(product.displayName),
+  brand: normalizeText(product.brand || ''),
+  cat: normalizeText(product.categoryName || ''),
+  packaging: normalizeText(product.packaging || ''),
+}));
 
-  const rawQuery = query.toLowerCase().trim();
+export function searchAllMercadonaProducts(query: string, maxResults: number = 40): MercadonaProduct[] {
+  const rawQuery = normalizeText(query || '');
+  if (!rawQuery) return [];
   const tokens = rawQuery.split(/\s+/).filter(Boolean);
 
-  // Score products based on relevance
   const scored: { product: MercadonaProduct; score: number }[] = [];
 
-  for (const product of FULL_CATALOG) {
-    const name = product.displayName.toLowerCase();
-    const brand = (product.brand || '').toLowerCase();
-    const cat = (product.categoryName || '').toLowerCase();
-    const packaging = (product.packaging || '').toLowerCase();
+  for (const entry of INDEX) {
+    const { name, brand, cat, packaging } = entry;
 
     // Must match all tokens somewhere
-    const matchesAll = tokens.every(token =>
-      name.includes(token) ||
-      brand.includes(token) ||
-      cat.includes(token) ||
-      packaging.includes(token)
+    const matchesAll = tokens.every(
+      (token) => name.includes(token) || brand.includes(token) || cat.includes(token) || packaging.includes(token),
     );
-
     if (!matchesAll) continue;
 
     let score = 0;
@@ -43,6 +44,8 @@ export function searchAllMercadonaProducts(query: string, maxResults: number = 4
     for (const token of tokens) {
       if (name.startsWith(token)) {
         score += 100;
+      } else if (name.includes(' ' + token)) {
+        score += 60;
       } else if (name.includes(token)) {
         score += 40;
       }
@@ -51,14 +54,14 @@ export function searchAllMercadonaProducts(query: string, maxResults: number = 4
       }
     }
 
-    // Penalize long distance
+    // Prefer shorter, more specific names
     score -= name.length * 0.1;
 
-    scored.push({ product, score });
+    scored.push({ product: entry.product, score });
   }
 
   scored.sort((a, b) => b.score - a.score);
-  return scored.slice(0, maxResults).map(s => s.product);
+  return scored.slice(0, maxResults).map((s) => s.product);
 }
 
 export function getTotalProductsCount(): number {

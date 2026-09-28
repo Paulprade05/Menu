@@ -1,0 +1,444 @@
+/* ==========================================================================
+   Ajustes — iOS "inset grouped" style
+   Mobile first; one column up to 1200px, then two columns.
+   ========================================================================== */
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  max-width: 680px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  min-width: 0;
+}
+
+.section {
+  min-width: 0;
+}
+
+@media (min-width: 1200px) {
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    column-gap: 28px;
+    row-gap: 12px;
+    max-width: none;
+  }
+
+  .footer {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Small grey text under a group (like iOS group footers) */
+.note {
+  margin: 8px 6px 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-3);
+}
+
+/* --------------------------------------------------------------------------
+   Rows
+   -------------------------------------------------------------------------- */
+
+.rowIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--ink);
+  color: var(--on-ink);
+}
+
+.rowIconSoft {
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+.rowIconDanger {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+/* list-row__main as a flex column, so <span>s inside buttons stack */
+.rowMain {
+  display: flex;
+  flex-direction: column;
+}
+
+.chevron {
+  flex-shrink: 0;
+  color: var(--text-4);
+}
+
+.rowButton:focus-visible {
+  outline-offset: -3px;
+}
+
+.rowButton:disabled {
+  cursor: default;
+}
+
+@media (hover: hover) {
+  .rowButton:hover {
+    background: var(--surface-2);
+  }
+}
+
+/* A row that holds a small form or a block of content */
+:global(.list-row).blockRow {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding-top: 14px;
+  padding-bottom: 16px;
+}
+
+/* --------------------------------------------------------------------------
+   Tu supermercado
+   -------------------------------------------------------------------------- */
+
+.cpForm {
+  max-width: 420px;
+}
+
+.cpInput {
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+
+.cpInput[aria-invalid='true'],
+.codeInput[aria-invalid='true'] {
+  border-color: var(--danger);
+}
+
+.cpInput[aria-invalid='true']:focus,
+.codeInput[aria-invalid='true']:focus {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.14);
+}
+
+/* The chip row bleeds to the edges of the group on phones */
+.chips {
+  --gutter: 14px;
+  padding-bottom: 2px;
+}
+
+@media (min-width: 640px) {
+  :global(.chip-row).chips {
+    flex-wrap: wrap;
+    overflow: visible;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Compartir con tu hogar
+   -------------------------------------------------------------------------- */
+
+.intro {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.introIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--ink);
+  color: var(--on-ink);
+}
+
+.introText {
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.inlineError {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.inlineError svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.joinPanel {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.joinForm {
+  display: flex;
+  flex-direction: column;
+}
+
+.codeInput {
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  /* Capitals on screen; the value itself is normalized when joining */
+  text-transform: uppercase;
+}
+
+.codeInput::placeholder {
+  letter-spacing: 0.06em;
+}
+
+.joinActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.statusMeta {
+  overflow-wrap: anywhere;
+}
+
+.statusError {
+  color: var(--danger);
+}
+
+/* Error row: icon at the top, message and "Reintentar" stacked beside it */
+:global(.list-row).statusRowError {
+  align-items: flex-start;
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+
+/* Main recovery action: keep a full 44px touch target */
+:global(.btn).retryBtn {
+  min-height: 44px;
+  margin-top: 10px;
+}
+
+.codeHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: -10px -4px 4px 0;
+}
+
+.codeLabel {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-2);
+}
+
+.codeBox {
+  padding: 14px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  text-align: center;
+}
+
+.code {
+  display: block;
+  font-size: clamp(15px, 5.2vw, 24px);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  overflow-wrap: anywhere;
+  -webkit-user-select: all;
+  user-select: all;
+  cursor: text;
+}
+
+.codeHint {
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-3);
+}
+
+.noticeBlock {
+  margin-bottom: 12px;
+}
+
+.noticeInCard {
+  margin-top: 16px;
+}
+
+.noticeIcon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.noticeTitle {
+  font-weight: 700;
+}
+
+.noticeText {
+  margin-top: 4px;
+}
+
+.noticeAction {
+  margin-top: 10px;
+}
+
+.disableRow {
+  display: flex;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+/* --------------------------------------------------------------------------
+   Instalar en el iPhone
+   -------------------------------------------------------------------------- */
+
+.installLead {
+  padding: 14px 14px 2px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--text-3);
+}
+
+.steps {
+  list-style: none;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--border);
+}
+
+.step:first-child {
+  border-top: 0;
+}
+
+.stepNum {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--r-full);
+  background: var(--ink);
+  color: var(--on-ink);
+  font-size: 13px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.stepText {
+  flex: 1;
+  min-width: 0;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--text-2);
+}
+
+.stepText strong {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.stepSub {
+  display: block;
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+.stepIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-top: 1px solid var(--border);
+  background: var(--surface-2);
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--text-2);
+}
+
+.tip svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* --------------------------------------------------------------------------
+   Borrar datos
+   -------------------------------------------------------------------------- */
+
+.dangerText {
+  margin-bottom: 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+
+@media (min-width: 640px) {
+  :global(.btn).dangerBtn {
+    width: auto;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Footer
+   -------------------------------------------------------------------------- */
+
+.footer {
+  padding: 4px 6px 8px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--text-4);
+}
+
+@media (min-width: 900px) {
+  .footer {
+    text-align: left;
+  }
+}

@@ -1,0 +1,490 @@
+/* Lista de la compra */
+
+.content {
+  max-width: 760px;
+}
+
+/* Wrapper of a header button that is hidden on phones (hide-mobile) */
+.headerSlot {
+  display: contents;
+}
+
+/* --------------------------------------------------------------------------
+   Progress (compact, inside the sticky page header)
+   -------------------------------------------------------------------------- */
+
+.progressBox {
+  max-width: 760px;
+  padding-top: 2px;
+}
+
+.progress {
+  height: 6px;
+}
+
+.progressLine {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.progressLine strong {
+  font-weight: 800;
+  color: var(--text);
+}
+
+.awake {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--text-2);
+}
+
+.progressTotal {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+/* --------------------------------------------------------------------------
+   Rows
+   -------------------------------------------------------------------------- */
+
+/* Long category names get the ellipsis; "6 · 23,40 €" never wraps */
+.groupName {
+  min-width: 0;
+}
+
+.groupAside {
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.row {
+  display: flex;
+  align-items: stretch;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.row:first-child {
+  border-top: 0;
+}
+
+/* Tight on phones: every pixel goes to the product name */
+.toggle {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 64px;
+  padding: 10px 2px 10px 12px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: background 0.15s ease;
+}
+
+.toggle:active {
+  background: var(--surface-3);
+}
+
+@media (hover: hover) {
+  .toggle:hover {
+    background: var(--surface-2);
+  }
+
+  .toggle:hover .check {
+    border-color: var(--text-3);
+  }
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--border-strong);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--on-ink);
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+}
+
+.toggle:active .check {
+  transform: scale(0.88);
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.meta {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.qty {
+  font-weight: 800;
+  color: var(--text);
+}
+
+.dishes {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-3);
+}
+
+.total {
+  flex-shrink: 0;
+  font-size: 15px;
+  color: var(--text);
+  text-align: right;
+}
+
+.totalEmpty {
+  font-weight: 600;
+  color: var(--text-4);
+}
+
+.edit {
+  align-self: center;
+}
+
+/* Product photo (hidden on very narrow screens, e.g. iPhone SE with display zoom) */
+.thumbSlot {
+  display: contents;
+}
+
+@media (max-width: 359px) {
+  .thumbSlot {
+    display: none;
+  }
+}
+
+/* Ticked */
+.isChecked .check {
+  border-color: var(--ink);
+  background: var(--ink);
+}
+
+.isChecked .check svg {
+  animation: check-pop 0.28s var(--ease) both;
+}
+
+.isChecked .name {
+  color: var(--text-3);
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+  text-decoration-color: var(--text-4);
+}
+
+.isChecked .qty {
+  color: var(--text-3);
+}
+
+.isChecked .total,
+.isChecked :global(.thumb) {
+  opacity: 0.5;
+}
+
+/* Just ticked: stays in place for a moment, then moves to the cart */
+.isLeaving {
+  animation: row-settle 1.1s ease both;
+}
+
+@keyframes check-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+
+@keyframes row-settle {
+  0%,
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.35;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   "En el carro"
+   -------------------------------------------------------------------------- */
+
+.cart {
+  margin-top: 24px;
+}
+
+.cartHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 64px;
+  padding: 10px 12px 10px 14px;
+  border: 0;
+  background: var(--surface);
+  color: inherit;
+  text-align: left;
+  transition: background 0.15s ease;
+}
+
+.cartHeader:active {
+  background: var(--surface-3);
+}
+
+@media (hover: hover) {
+  .cartHeader:hover {
+    background: var(--surface-2);
+  }
+}
+
+.cartBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--on-ink);
+}
+
+.cartTitles {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.cartTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.cartMeta {
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+.cartCost {
+  flex-shrink: 0;
+  font-size: 15px;
+  color: var(--text-2);
+}
+
+.chevron {
+  flex-shrink: 0;
+  color: var(--text-3);
+  transition: transform 0.22s var(--ease);
+}
+
+.cartOpen .chevron {
+  transform: rotate(180deg);
+}
+
+.cartBody {
+  border-top: 1px solid var(--border);
+}
+
+/* --------------------------------------------------------------------------
+   Completion card
+   -------------------------------------------------------------------------- */
+
+.done {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 26px 18px 18px;
+  text-align: center;
+}
+
+.doneIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  margin-bottom: 14px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--on-ink);
+  animation: done-pop 0.45s var(--ease) both;
+}
+
+.doneTitle {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.doneMeta {
+  margin-top: 4px;
+  font-size: 14px;
+  color: var(--text-3);
+}
+
+.doneLabel {
+  margin-top: 16px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.doneAmount {
+  margin-top: 2px;
+  font-size: 32px;
+  line-height: 1.15;
+  color: var(--text);
+}
+
+.doneActions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+@keyframes done-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Options sheet
+   -------------------------------------------------------------------------- */
+
+.optionsGroup {
+  margin-top: 12px;
+}
+
+.option {
+  gap: 14px;
+}
+
+.option :global(.list-row__title),
+.option :global(.list-row__meta) {
+  display: block;
+}
+
+.option:disabled {
+  cursor: default;
+}
+
+.option:disabled > * {
+  opacity: 0.4;
+}
+
+.optionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r-sm);
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+.optionDanger :global(.list-row__title) {
+  color: var(--danger);
+}
+
+.optionDanger .optionIcon {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+/* iOS style switch (the whole row is the control) */
+.switch {
+  position: relative;
+  flex-shrink: 0;
+  width: 51px;
+  height: 31px;
+  border-radius: var(--r-full);
+  background: var(--border-strong);
+  transition: background 0.2s ease;
+}
+
+.switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 2px 5px rgba(15, 23, 42, 0.22);
+  transition: transform 0.22s var(--ease);
+}
+
+.switchOn {
+  background: var(--ink);
+}
+
+.switchOn::after {
+  transform: translateX(20px);
+}
+
+/* --------------------------------------------------------------------------
+   Tablet / desktop
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 640px) {
+  /* "Compartir lista" (phones only) is hidden: the next row is the first one */
+  .option:global(.hide-desktop):first-child + .option {
+    border-top: 0;
+  }
+
+  .toggle {
+    gap: 14px;
+    padding-left: 16px;
+  }
+
+  .done {
+    padding: 32px 24px 24px;
+  }
+
+  .doneActions {
+    grid-template-columns: 1fr 1fr;
+    max-width: 440px;
+  }
+}

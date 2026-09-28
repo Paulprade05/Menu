@@ -23,6 +23,7 @@ export interface Ingredient {
 }
 
 export type MealType = 'comida' | 'cena' | 'ambas';
+export type MealSlot = 'comida' | 'cena';
 
 export interface Dish {
   id: string;
@@ -34,14 +35,18 @@ export interface Dish {
   imageUrl?: string;
   estimatedCost: number;
   createdAt: string;
+  /** ms epoch of the last change, used to merge between devices */
+  updatedAt?: number;
 }
+
+export type DishInput = Omit<Dish, 'id' | 'createdAt' | 'estimatedCost' | 'updatedAt'>;
 
 export type DayKey = 'lunes' | 'martes' | 'miercoles' | 'jueves' | 'viernes' | 'sabado' | 'domingo';
 
 export interface DayPlan {
   dayKey: DayKey;
   dayLabel: string;
-  comidaDishId: string | null; // dish id or 'out' or 'leftovers' or null
+  comidaDishId: string | null;
   comidaCustomName?: string;
   cenaDishId: string | null;
   cenaCustomName?: string;
@@ -53,6 +58,11 @@ export interface WeekMenu {
   activeDaysCount: number; // 6 (L-S) or 7 (L-D)
   days: DayPlan[];
   updatedAt: string;
+  /**
+   * ms epoch of the last change of each meal ("lunes:comida", "martes:cena"…),
+   * "activeDaysCount" and "name": two people can plan different meals at the same time
+   */
+  fieldUpdatedAt?: Record<string, number>;
 }
 
 export interface SavedMenuTemplate {
@@ -62,6 +72,7 @@ export interface SavedMenuTemplate {
   days: DayPlan[];
   activeDaysCount: number;
   createdAt: string;
+  updatedAt?: number;
 }
 
 export interface ShoppingListItem {
@@ -75,24 +86,57 @@ export interface ShoppingListItem {
   isManual: boolean;
   mercadonaProduct?: MercadonaProduct;
   estimatedPrice: number;
+  updatedAt?: number;
+  /** true when the user changed the price by hand in the list (kept when the list is regenerated) */
+  priceEdited?: boolean;
+  /** Items from the menu: the quantity the menu asked for last time (user changes are kept on top) */
+  menuQuantity?: number;
+  /** Items from the menu the user removed ("ya lo tengo"): hidden, so updating the list doesn't bring them back */
+  dismissed?: boolean;
+}
+
+export interface NewShoppingItem {
+  name: string;
+  quantity?: number;
+  unit?: string;
+  product?: MercadonaProduct;
+  category?: string;
+  price?: number;
 }
 
 export interface UserSettings {
   postalCode: string;
   warehouse: string;
+  /** Household code, local to this device (never synced as data) */
   syncCode: string;
   defaultDaysCount: number; // 6 or 7
   customStoreName?: string;
-  supabaseUrl?: string;
-  supabaseAnonKey?: string;
+  /** ms epoch of the last change to synced preferences */
+  prefsUpdatedAt?: number;
 }
 
-export interface SyncPayload {
-  syncCode: string;
+/** id -> ms epoch when it was deleted */
+export type Tombstones = Record<string, number>;
+
+export interface SyncPrefs {
+  postalCode: string;
+  warehouse: string;
+  defaultDaysCount: number;
+  updatedAt: number;
+}
+
+/** Document stored in the cloud for a household code */
+export interface SyncDoc {
+  schema: 1;
   dishes: Dish[];
-  weekMenu: WeekMenu;
   savedMenus: SavedMenuTemplate[];
   shoppingList: ShoppingListItem[];
-  settings: UserSettings;
-  timestamp: number;
+  weekMenu: WeekMenu;
+  prefs: SyncPrefs;
+  tombstones: Tombstones;
+  updatedAt: number;
 }
+
+export type AppTab = 'menu' | 'dishes' | 'shopping' | 'settings';
+
+export type SyncStatus = 'off' | 'idle' | 'syncing' | 'synced' | 'error' | 'offline' | 'unconfigured';

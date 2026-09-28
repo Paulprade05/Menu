@@ -1,0 +1,124 @@
+/* Ficha de un producto de la lista de la compra */
+
+/* Very long product names: the header stays small (it does not scroll) */
+.title {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.summaryText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1;
+  min-width: 0;
+}
+
+.totalLabel {
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.totalValue {
+  margin-top: 2px;
+  font-size: 30px;
+  line-height: 1.1;
+  color: var(--text);
+}
+
+.totalMeta {
+  margin-top: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.status {
+  margin-top: 8px;
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.hint {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 10px;
+  row-gap: 0;
+}
+
+.useBtn {
+  min-height: 36px;
+  padding: 0;
+  font-size: 13.5px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.dishes {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 2px 0 16px;
+  padding: 12px 14px;
+  border-radius: var(--r-md);
+  background: var(--surface-3);
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--text-2);
+}
+
+.dishes strong {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.dishesIcon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--text-3);
+}
+
+.link {
+  margin-top: 2px;
+}
+
+.footer {
+  display: flex;
+  gap: 10px;
+}
+
+.remove {
+  flex-shrink: 0;
+  padding: 0 16px;
+}
+
+.done {
+  flex: 1;
+  min-width: 0;
+}
+
+/* The dialog is wider than a phone: quantity and price side by side */
+@media (min-width: 640px) {
+  .fields {
+    grid-template-columns: auto 1fr;
+    column-gap: 20px;
+  }
+}

@@ -1,29 +1,20 @@
 'use client';
 
-import React from 'react';
-import { useApp } from '@/context/AppContext';
-import Navigation from '@/components/Navigation';
-import MenuPlannerView from '@/components/MenuPlannerView';
-import DishBankView from '@/components/DishBankView';
-import ShoppingListView from '@/components/ShoppingListView';
-import SettingsView from '@/components/SettingsView';
-import PwaRegister from '@/components/PwaRegister';
+import dynamic from 'next/dynamic';
 
-export default function HomePage() {
-  const { activeTab } = useApp();
-
+function Splash() {
   return (
-    <div className="app-shell">
-      <Navigation />
-
-      <main className="app-main">
-        {activeTab === 'menu' && <MenuPlannerView />}
-        {activeTab === 'dishes' && <DishBankView />}
-        {activeTab === 'shopping' && <ShoppingListView />}
-        {activeTab === 'settings' && <SettingsView />}
-
-        <PwaRegister />
-      </main>
+    <div className="splash" aria-busy="true" aria-label="Cargando">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/apple-touch-icon.png" alt="" className="splash__logo" width={92} height={92} />
+      <span className="splash__name">Menú &amp; Compra</span>
     </div>
   );
+}
+
+// Client only: the data lives in this device's storage
+const ClientApp = dynamic(() => import('@/components/ClientApp'), { ssr: false, loading: Splash });
+
+export default function HomePage() {
+  return <ClientApp />;
 }

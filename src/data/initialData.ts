@@ -1,4 +1,4 @@
-import { Dish, DayPlan, WeekMenu, UserSettings, ShoppingListItem } from '@/types';
+import type { Dish, SavedMenuTemplate, UserSettings, WeekMenu } from '@/types';
 
 // Configurado por defecto para Logroño (La Rioja)
 export const DEFAULT_POSTAL_CODE = '26001';
@@ -38,30 +38,38 @@ export function getWarehouseFromPostalCode(postalCode: string): string {
 }
 
 export const INITIAL_SETTINGS: UserSettings = {
-  postalCode: '26001',
-  warehouse: 'zgz1',
-  syncCode: 'LOGRO-101',
+  postalCode: DEFAULT_POSTAL_CODE,
+  warehouse: DEFAULT_WAREHOUSE,
+  syncCode: '', // se genera al arrancar la app
   defaultDaysCount: 6, // Lunes a Sábado por defecto
   customStoreName: 'Mercadona Logroño',
+  prefsUpdatedAt: 0,
 };
 
-// Limpio sin datos de prueba (como solicitó el usuario)
 export const INITIAL_DISHES: Dish[] = [];
 
-export const INITIAL_WEEK_MENU: WeekMenu = {
-  id: 'menu-semana-activa',
-  name: 'Menú semanal activo',
-  activeDaysCount: 6, // Lunes a Sábado por defecto
-  updatedAt: new Date().toISOString(),
-  days: [
-    { dayKey: 'lunes', dayLabel: 'Lunes', comidaDishId: null, cenaDishId: null },
-    { dayKey: 'martes', dayLabel: 'Martes', comidaDishId: null, cenaDishId: null },
-    { dayKey: 'miercoles', dayLabel: 'Miércoles', comidaDishId: null, cenaDishId: null },
-    { dayKey: 'jueves', dayLabel: 'Jueves', comidaDishId: null, cenaDishId: null },
-    { dayKey: 'viernes', dayLabel: 'Viernes', comidaDishId: null, cenaDishId: null },
-    { dayKey: 'sabado', dayLabel: 'Sábado', comidaDishId: null, cenaDishId: null },
-    { dayKey: 'domingo', dayLabel: 'Domingo', comidaDishId: null, cenaDishId: null }
-  ]
-};
+export const INITIAL_SAVED_MENUS: SavedMenuTemplate[] = [];
 
-export const INITIAL_SAVED_MENUS: any[] = [];
+/**
+ * Empty week. `updatedAt` is the epoch on purpose: a freshly installed device must
+ * never win against a household menu when both are merged.
+ */
+export function createEmptyWeekMenu(activeDaysCount: number = 6, updatedAt: string = new Date(0).toISOString()): WeekMenu {
+  return {
+    id: 'menu-semana-activa',
+    name: 'Menú semanal activo',
+    activeDaysCount,
+    updatedAt,
+    days: [
+      { dayKey: 'lunes', dayLabel: 'Lunes', comidaDishId: null, cenaDishId: null },
+      { dayKey: 'martes', dayLabel: 'Martes', comidaDishId: null, cenaDishId: null },
+      { dayKey: 'miercoles', dayLabel: 'Miércoles', comidaDishId: null, cenaDishId: null },
+      { dayKey: 'jueves', dayLabel: 'Jueves', comidaDishId: null, cenaDishId: null },
+      { dayKey: 'viernes', dayLabel: 'Viernes', comidaDishId: null, cenaDishId: null },
+      { dayKey: 'sabado', dayLabel: 'Sábado', comidaDishId: null, cenaDishId: null },
+      { dayKey: 'domingo', dayLabel: 'Domingo', comidaDishId: null, cenaDishId: null },
+    ],
+  };
+}
+
+export const INITIAL_WEEK_MENU: WeekMenu = createEmptyWeekMenu();

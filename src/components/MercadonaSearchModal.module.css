@@ -1,0 +1,503 @@
+/* Mercadona product search sheet — mobile first */
+
+/* --------------------------------------------------------------------------
+   Toolbar: search box + quick searches
+   -------------------------------------------------------------------------- */
+
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Safari draws its own clear button in type="search": we already have one */
+.searchInput::-webkit-search-cancel-button,
+.searchInput::-webkit-search-decoration,
+.searchInput::-webkit-search-results-button,
+.searchInput::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   Body
+   -------------------------------------------------------------------------- */
+
+.body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+/* "No hay resultados para «texto»": a long typed word must wrap, not scroll the sheet sideways */
+.body :global(.empty-state__title),
+.body :global(.empty-state__text) {
+  overflow-wrap: anywhere;
+}
+
+.flash {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 11px 14px;
+  border-radius: var(--r-md);
+  background: var(--ink);
+  color: var(--on-ink);
+  font-size: 14px;
+  font-weight: 700;
+  animation: flash-in 0.24s var(--ease) both;
+}
+
+.flash svg {
+  flex-shrink: 0;
+}
+
+.flashText {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.countLine {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-3);
+}
+
+.countHint {
+  flex-shrink: 0;
+  font-weight: 500;
+  color: var(--text-4);
+}
+
+/* --------------------------------------------------------------------------
+   Recent searches (idle state)
+   -------------------------------------------------------------------------- */
+
+.recent {
+  margin-bottom: 4px;
+}
+
+.recentHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: -10px 0 2px;
+}
+
+.recentTitle {
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.recentHeader .recentClear {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   Results
+   -------------------------------------------------------------------------- */
+
+.results {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Rows bleed to the edges of the sheet so the pressed state fills the width */
+.item,
+.skeletonRow {
+  position: relative;
+  margin: 0 calc(-1 * var(--gutter));
+}
+
+/* iOS-style divider, inset after the thumbnail */
+.item + .item::before,
+.skeletonRow + .skeletonRow::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: calc(var(--gutter) + 68px);
+  z-index: 1;
+  height: 1px;
+  background: var(--border);
+  pointer-events: none;
+}
+
+.itemButton {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 12px;
+  width: 100%;
+  min-height: 84px;
+  padding: 12px var(--gutter);
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: background 0.15s ease;
+}
+
+.itemButton:active {
+  background: var(--surface-3);
+}
+
+.itemButton:focus-visible {
+  outline-offset: -2px;
+}
+
+@media (hover: hover) {
+  .itemButton:hover {
+    background: var(--surface-2);
+  }
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.metaLine {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.metaLine .brand {
+  flex-shrink: 0;
+  display: inline-block;
+  max-width: 62%;
+  height: 20px;
+  padding: 0 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 20px;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.packaging {
+  min-width: 0;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-3);
+}
+
+.name {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.reference {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 6px;
+}
+
+.side .price {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.addIcon,
+.addedPill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  border-radius: var(--r-full);
+  background: var(--ink);
+  color: var(--on-ink);
+  transition: transform 0.12s ease;
+}
+
+.addIcon {
+  width: 40px;
+}
+
+.addedPill {
+  gap: 3px;
+  min-width: 40px;
+  padding: 0 12px 0 10px;
+  font-size: 14px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.itemButton:active .addIcon,
+.itemButton:active .addedPill {
+  transform: scale(0.9);
+}
+
+.pop {
+  animation: pop 0.36s var(--ease);
+}
+
+/* "Añadir «texto» sin precio" after the results / next to an error */
+.customAdd {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 60px;
+  margin-top: 14px;
+  padding: 10px 14px;
+  border: 1.5px dashed var(--border-strong);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  color: var(--text);
+  text-align: left;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.customAdd:active {
+  background: var(--surface-3);
+}
+
+@media (hover: hover) {
+  .customAdd:hover {
+    border-color: var(--text-4);
+    background: var(--surface-2);
+  }
+}
+
+.customIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r-full);
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+.customText {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.customLabel {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.customHint {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-3);
+}
+
+/* Long typed text inside the "no results" button: wrap instead of overflowing */
+:global(.btn).wrapBtn {
+  height: auto;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  white-space: normal;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+:global(.btn).wrapBtn svg {
+  flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Error
+   -------------------------------------------------------------------------- */
+
+.errorBox {
+  align-items: flex-start;
+}
+
+.errorIcon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+:global(.btn).retry {
+  margin-top: 10px;
+  color: var(--text);
+}
+
+/* --------------------------------------------------------------------------
+   Loading skeleton
+   -------------------------------------------------------------------------- */
+
+.skeletonRow {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 12px;
+  min-height: 84px;
+  padding: 12px var(--gutter);
+}
+
+.skeletonText {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.skeletonSide {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.bone {
+  display: block;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--surface-3) 25%, var(--surface-pressed) 50%, var(--surface-3) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.3s ease-in-out infinite;
+}
+
+.boneThumb {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--r-sm);
+}
+
+.boneTag {
+  width: 72px;
+  height: 14px;
+}
+
+.boneLine {
+  width: 88%;
+  height: 15px;
+}
+
+.boneLineShort {
+  width: 55%;
+  height: 15px;
+}
+
+.bonePrice {
+  width: 52px;
+  height: 17px;
+}
+
+.boneButton {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-full);
+}
+
+.skeletonRow:nth-child(2) .boneLine {
+  width: 70%;
+}
+
+.skeletonRow:nth-child(3) .boneLineShort {
+  width: 40%;
+}
+
+.skeletonRow:nth-child(4) .boneLine {
+  width: 95%;
+}
+
+/* --------------------------------------------------------------------------
+   Animations
+   -------------------------------------------------------------------------- */
+
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.72);
+  }
+  55% {
+    transform: scale(1.14);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes flash-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bone {
+    animation: none;
+    background: var(--surface-3);
+  }
+
+  .pop,
+  .flash {
+    animation: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Tablet / desktop
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 640px) {
+  .itemButton,
+  .skeletonRow {
+    min-height: 80px;
+  }
+
+  .countLine {
+    margin-bottom: 6px;
+  }
+}

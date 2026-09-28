@@ -1,0 +1,210 @@
+/* DishPickerModal — "Comida del lunes" bottom sheet */
+
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Three filters must fit on an iPhone SE (375px) */
+.filters {
+  gap: 6px;
+}
+
+.filterChip {
+  padding: 0 12px;
+}
+
+.chipCount {
+  margin-left: 1px;
+  font-size: 13px;
+  font-weight: 700;
+  opacity: 0.55;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Each section starts with a .section-title (4px top margin as first child) */
+.section + .section,
+.current + .section {
+  margin-top: 18px;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  overflow-wrap: anywhere; /* very long words in dish names / typed text */
+}
+
+/* Rows live in .list (overflow hidden): draw the keyboard focus ring inside */
+.dishRow:focus-visible,
+.actionRow:focus-visible {
+  outline-offset: -3px;
+}
+
+/* What the meal has now + "Quitar" */
+.current {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+  padding: 8px 8px 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface-2);
+}
+
+.currentIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--on-ink);
+}
+
+.currentText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.currentLabel {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.currentName {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* "Sin cocinar": three tiles */
+.quick {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.quickBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 64px;
+  padding: 8px 6px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: 13.5px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.quickBtn:active {
+  transform: scale(0.97);
+  background: var(--surface-3);
+}
+
+.quickBtnActive,
+.quickBtnActive:active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--on-ink);
+}
+
+@media (hover: hover) {
+  .quickBtn:not(.quickBtnActive):hover {
+    background: var(--surface-2);
+    border-color: var(--text-4);
+  }
+}
+
+/* Search results */
+.noResults {
+  padding: 4px 4px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-3);
+}
+
+.showAll {
+  margin: 8px 0 0 -4px;
+  color: var(--text);
+}
+
+/* No results: "Ver N platos más en «Todos»" sits between the message and "Crear plato «…»" */
+.noResults + .showAll {
+  margin: -4px 0 12px -4px;
+}
+
+.actionRow {
+  min-height: 60px;
+}
+
+.actionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+.actionIconInk {
+  background: var(--ink);
+  color: var(--on-ink);
+}
+
+/* Dish list */
+.dishRow {
+  min-height: 64px;
+}
+
+@media (hover: hover) {
+  .dishRow:hover {
+    background: var(--surface-2);
+  }
+}
+
+.dishRowSelected {
+  background: var(--surface-2);
+}
+
+.dishEnd {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.dishPrice {
+  font-size: 14px;
+  color: var(--text);
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--on-ink);
+}
